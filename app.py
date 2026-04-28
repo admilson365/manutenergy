@@ -90,34 +90,42 @@ if menu == "Assistente Técnico":
     st.markdown('<div class="block">', unsafe_allow_html=True)
     st.subheader("🤖 Chat Técnico")
 
-    pergunta = st.text_input("Digite sua pergunta:")
-if pergunta:
-    resultado = buscar_memoria(pergunta)
-    st.write(resultado)
+    # Upload de arquivos PDF
     arquivos = st.file_uploader(
         "Envie manuais PDF para consulta:",
         type=["pdf"],
         accept_multiple_files=True
     )
 
+    # Quando enviar arquivos, salva na memória
+    if arquivos:
+        extrair_texto_pdf(arquivos)
+        st.success("📁 Arquivos carregados com sucesso!")
+
+    # Campo de pergunta
+    pergunta = st.text_input("Digite sua pergunta:")
+
+    # Botão consultar
     if st.button("Consultar"):
+
         if pergunta:
-            resposta = f"Pergunta recebida: {pergunta}\n\n"
 
-            if arquivos:
-                texto = extrair_texto_pdf(arquivos)
+            resultado = buscar_memoria(pergunta)
 
-                if pergunta.lower() in texto.lower():
-                    resposta += "📄 Informação encontrada nos arquivos internos."
-                else:
-                    resposta += "🌐 Informação não localizada nos arquivos. Sugestão: consultar base externa."
+            if resultado:
+                st.success("📄 Informação encontrada nos arquivos:")
+
+                for item in resultado:
+                    st.write(item)
+
             else:
-                resposta += "📁 Nenhum arquivo enviado. Resposta baseada em conhecimento geral."
+                st.warning("🌐 Informação não localizada nos arquivos. Sugestão: consultar base externa.")
 
-            st.success(resposta)
         else:
             st.warning("Digite uma pergunta.")
+
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ---------------- BIBLIOTECA ----------------
 elif menu == "Biblioteca":
