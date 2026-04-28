@@ -1,31 +1,40 @@
-import os
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
 
-embeddings = OpenAIEmbeddings()
+VECTORSTORE = None
 
-def ler_pdf(caminho_arquivo):
-    loader = PyPDFLoader(caminho_arquivo)
+
+def ler_pdf(caminho):
+    loader = PyPDFLoader(caminho)
     return loader.load()
 
-def quebrar_texto(paginas):
+
+def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200
     )
-    return splitter.split_documents(paginas)
+    return splitter.split_documents(docs)
 
-def salvar_memoria(partes, caminho="storage/faiss_index"):
-    if os.path.exists(caminho):
-        db = FAISS.load_local(caminho, embeddings, allow_dangerous_deserialization=True)
-        db.add_documents(partes)
-    else:
-        db = FAISS.from_documents(partes, embeddings)
 
-    db.save_local(caminho)
+def salvar_memoria(textos):
+    global VECTORSTORE
 
-def buscar_memoria(pergunta, caminho="storage/faiss_index"):
-    db = FAISS.load_local(caminho, embeddings, allow_dangerous_deserialization=True)
-    return db.similarity_search(pergunta, k=4)
+    embeddings = OpenAIEmbeddings()
+
+    VECTORSTORE = FAISS.from_documents(textos, embeddings)
+
+    return VECTORSTORE
+
+
+def buscar_memoria(pergunta):
+    global VECTORSTORE
+
+    if VECTORSTORE is None:
+        return []
+
+    docs = VECTORSTORE.similarity_search(pergunta, k=4)
+
+    return [d.page_content for d in docs]
