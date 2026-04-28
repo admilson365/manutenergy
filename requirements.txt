@@ -2,7 +2,7 @@ streamlit
 langchain
 langchain-community
 langchain-text-splitters
-langchain-openai
-pypdf
-openai
 faiss-cpu
+pypdf
+sentence-transformers
+torch
