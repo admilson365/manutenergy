@@ -7,7 +7,7 @@ VECTORSTORE = None
 
 
 from pypdf import PdfReader
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 def ler_pdf(file):
     reader = PdfReader(file)
