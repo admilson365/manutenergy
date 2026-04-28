@@ -7,7 +7,7 @@
 
 import streamlit as st
 import os
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 # ---------------- CONFIG ----------------
 st.set_page_config(
