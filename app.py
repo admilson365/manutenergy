@@ -4,11 +4,26 @@ from rag_engine import ler_pdf, quebrar_texto, salvar_memoria, buscar_memoria
 st.set_page_config(page_title="ManutEnergy AI", layout="wide")
 
 # LOGIN SIMPLES
-usuarios = {
-    "admin": "1234",
-    "tecnico1": "1234",
-    "supervisor": "1234"
-}
+import json
+import os
+
+ARQUIVO_USERS = "users.json"
+
+
+def carregar_usuarios():
+    if os.path.exists(ARQUIVO_USERS):
+        with open(ARQUIVO_USERS, "r") as f:
+            return json.load(f)
+    return {
+        "admilson": "1234",
+        "tecnico1": "1234",
+        "supervisor": "1234"
+    }
+
+
+def salvar_usuarios(usuarios):
+    with open(ARQUIVO_USERS, "w") as f:
+        json.dump(usuarios, f)
 
 if "logado" not in st.session_state:
     st.session_state.logado = False
@@ -17,17 +32,19 @@ if not st.session_state.logado:
 
     st.title("🔐 Login - ManutEnergy AI")
 
-    usuario = st.text_input("Usuário")
-    senha = st.text_input("Senha", type="password")
+    usuarios = carregar_usuarios()
 
-    if st.button("Entrar"):
+usuario = st.text_input("Usuário")
+senha = st.text_input("Senha", type="password")
 
-        if usuario in usuarios and usuarios[usuario] == senha:
-            st.session_state.logado = True
-            st.session_state.usuario = usuario
-            st.rerun()
-        else:
-            st.error("Usuário ou senha inválidos")
+if st.button("Entrar"):
+
+    if usuario in usuarios and usuarios[usuario] == senha:
+        st.session_state.logado = True
+        st.session_state.usuario = usuario
+        st.rerun()
+    else:
+        st.error("Usuário ou senha inválidos")
 
 else:
 
