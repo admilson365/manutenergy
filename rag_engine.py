@@ -6,9 +6,21 @@ from langchain_community.vectorstores import FAISS
 VECTORSTORE = None
 
 
-def ler_pdf(caminho):
-    loader = PyPDFLoader(caminho)
-    return loader.load()
+from pypdf import PdfReader
+from langchain.schema import Document
+
+def ler_pdf(file):
+    reader = PdfReader(file)
+
+    docs = []
+
+    for page in reader.pages:
+        texto = page.extract_text()
+
+        if texto:
+            docs.append(Document(page_content=texto))
+
+    return docs
 
 
 def quebrar_texto(docs):
