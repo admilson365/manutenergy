@@ -1,8 +1,9 @@
 streamlit
+pandas
+pypdf
+faiss-cpu
+sentence-transformers
 langchain
 langchain-community
+langchain-core
 langchain-text-splitters
-faiss-cpu
-pypdf
-sentence-transformers
-torch
