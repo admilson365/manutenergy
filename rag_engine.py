@@ -72,7 +72,7 @@ Responda resumindo e explicando claramente.
         messages=[
             {"role": "user", "content": prompt}
         ],
-        model="llama3-70b-8192"
+      model="llama-3.1-8b-instant"  
     )
 
     return chat.choices[0].message.content
