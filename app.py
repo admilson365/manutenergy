@@ -14,12 +14,7 @@ def carregar_usuarios():
     if os.path.exists(ARQUIVO_USERS):
         with open(ARQUIVO_USERS, "r") as f:
             return json.load(f)
-    return {
-        "admilson": "1234",
-        "tecnico1": "1234",
-        "supervisor": "1234"
-    }
-
+    return {}
 
 def salvar_usuarios(usuarios):
     with open(ARQUIVO_USERS, "w") as f:
