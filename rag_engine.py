@@ -34,7 +34,7 @@ def quebrar_texto(docs):
 def salvar_memoria(textos):
     global VECTORSTORE
 
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
     VECTORSTORE = FAISS.from_documents(textos, embeddings)
 
