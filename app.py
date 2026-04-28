@@ -1,63 +1,63 @@
 import streamlit as st
+import streamlit_authenticator as stauth
 from rag_engine import ler_pdf, quebrar_texto, salvar_memoria, buscar_memoria
 
-st.set_page_config(
-    page_title="ManutEnergy AI",
-    layout="wide"
+st.set_page_config(page_title="ManutEnergy AI", layout="wide")
+
+# USUÁRIOS
+names = ["Admilson", "Tecnico 1", "Supervisor"]
+usernames = ["admin", "tecnico1", "supervisor"]
+
+passwords = ["1234", "1234", "1234"]
+
+hashed_passwords = stauth.Hasher(passwords).generate()
+
+authenticator = stauth.Authenticate(
+    names,
+    usernames,
+    hashed_passwords,
+    "manutenergy_cookie",
+    "abcdef",
+    cookie_expiry_days=7
 )
 
-st.markdown("""
-<style>
-.main {
-    background-color: #0f172a;
-}
-.block {
-    background: white;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.15);
-}
-h1 {
-    color: white;
-}
-</style>
-""", unsafe_allow_html=True)
+name, authentication_status, username = authenticator.login("Login", "main")
 
-st.title("🏭 ManutEnergy AI")
-st.caption("Plataforma Inteligente de Manutenção Industrial")
+if authentication_status == False:
+    st.error("Usuário ou senha incorretos")
 
-st.markdown('<div class="block">', unsafe_allow_html=True)
+elif authentication_status == None:
+    st.warning("Digite usuário e senha")
 
-st.subheader("📁 Upload de Manuais / Procedimentos")
+elif authentication_status:
 
-arquivos = st.file_uploader(
-    "Envie arquivos PDF",
-    type=["pdf"],
-    accept_multiple_files=True
-)
+    authenticator.logout("Sair", "sidebar")
 
-if arquivos:
-    todos_docs = []
+    st.title("🏭 ManutEnergy AI")
+    st.success(f"Bem-vindo, {name}")
 
-    for arquivo in arquivos:
-        docs = ler_pdf(arquivo)
-        todos_docs.extend(docs)
+    arquivos = st.file_uploader(
+        "Envie manuais PDF",
+        type=["pdf"],
+        accept_multiple_files=True
+    )
 
-    chunks = quebrar_texto(todos_docs)
-    salvar_memoria(chunks)
+    if arquivos:
+        docs_total = []
 
-    st.success("Arquivos processados com sucesso.")
+        for arquivo in arquivos:
+            docs = ler_pdf(arquivo)
+            docs_total.extend(docs)
 
-st.subheader("🤖 Assistente Técnico")
+        chunks = quebrar_texto(docs_total)
+        salvar_memoria(chunks)
 
-pergunta = st.text_input("Digite sua pergunta técnica:")
+        st.success("Arquivos carregados.")
 
-if st.button("Consultar"):
+    pergunta = st.text_input("Digite sua pergunta técnica")
 
-    if pergunta:
-        resposta = buscar_memoria(pergunta)
-        st.write(resposta)
-    else:
-        st.warning("Digite uma pergunta.")
+    if st.button("Consultar"):
 
-st.markdown('</div>', unsafe_allow_html=True)
+        if pergunta:
+            resposta = buscar_memoria(pergunta)
+            st.write(resposta)
