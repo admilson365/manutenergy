@@ -1,165 +1,63 @@
-from rag_engine import ler_pdf, quebrar_texto, salvar_memoria, buscar_memoria
-# app.py
-# ManutEnergy AI - Piloto Streamlit
-# Instalar dependências no requirements.txt:
-# streamlit
-# PyPDF2
-# openai (opcional para IA real)
-
 import streamlit as st
-import os
-from pypdf import PdfReader
+from rag_engine import ler_pdf, quebrar_texto, salvar_memoria, buscar_memoria
 
-# ---------------- CONFIG ----------------
 st.set_page_config(
     page_title="ManutEnergy AI",
-    page_icon="⚙️",
     layout="wide"
 )
 
-# ---------------- CSS INDUSTRIAL VERDE ----------------
 st.markdown("""
 <style>
-html, body, [class*="css"] {
-    background-color: #0f1117;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-.main-title {
-    font-size: 42px;
-    font-weight: bold;
-    color: #35ff8a;
-}
-.sub-title {
-    color: #9ef7c2;
-    font-size: 18px;
-}
-.stTextInput>div>div>input {
-    background-color: #1c1f26;
-    color: white;
-}
-.stTextArea textarea {
-    background-color: #1c1f26;
-    color: white;
+.main {
+    background-color: #0f172a;
 }
 .block {
-    background-color: #161a22;
-    padding: 20px;
+    background: white;
+    padding: 25px;
     border-radius: 14px;
-    border: 1px solid #2e8b57;
-    margin-bottom: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.15);
+}
+h1 {
+    color: white;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- SIDEBAR ----------------
-st.sidebar.title("⚙️ ManutEnergy AI")
-planta = st.sidebar.selectbox(
-    "Selecione a Planta:",
-    ["Amparo", "Mogi mirim", "Arceburgo", "Curitiba"]
+st.title("🏭 ManutEnergy AI")
+st.caption("Plataforma Inteligente de Manutenção Industrial")
+
+st.markdown('<div class="block">', unsafe_allow_html=True)
+
+st.subheader("📁 Upload de Manuais / Procedimentos")
+
+arquivos = st.file_uploader(
+    "Envie arquivos PDF",
+    type=["pdf"],
+    accept_multiple_files=True
 )
 
-menu = st.sidebar.radio(
-    "Menu",
-    ["Assistente Técnico", "Biblioteca", "Indicadores", "Sobre"]
-)
+if arquivos:
+    todos_docs = []
 
-# ---------------- FUNÇÃO LER PDF ----------------
-def extrair_texto_pdf(uploaded_files):
-    texto_total = ""
+    for arquivo in arquivos:
+        docs = ler_pdf(arquivo)
+        todos_docs.extend(docs)
 
-    for file in uploaded_files:
-        docs = ler_pdf(file)
-        chunks = quebrar_texto(docs)
-        salvar_memoria(chunks)
+    chunks = quebrar_texto(todos_docs)
+    salvar_memoria(chunks)
 
-        reader = PdfReader(file)
+    st.success("Arquivos processados com sucesso.")
 
-        for page in reader.pages:
-            texto_total += page.extract_text() + "\n"
+st.subheader("🤖 Assistente Técnico")
 
-    return texto_total
+pergunta = st.text_input("Digite sua pergunta técnica:")
 
-# ---------------- TELA PRINCIPAL ----------------
-st.markdown('<div class="main-title">⚙️ ManutEnergy AI</div>', unsafe_allow_html=True)
-st.markdown(f'<div class="sub-title">IA Industrial da planta: {planta}</div>', unsafe_allow_html=True)
-st.write("")
+if st.button("Consultar"):
 
-# ---------------- ASSISTENTE ----------------
-if menu == "Assistente Técnico":
-    st.markdown('<div class="block">', unsafe_allow_html=True)
-    st.subheader("🤖 Chat Técnico")
+    if pergunta:
+        resposta = buscar_memoria(pergunta)
+        st.write(resposta)
+    else:
+        st.warning("Digite uma pergunta.")
 
-    # Upload de arquivos PDF
-    arquivos = st.file_uploader(
-        "Envie manuais PDF para consulta:",
-        type=["pdf"],
-        accept_multiple_files=True
-    )
-
-    # Quando enviar arquivos, salva na memória
-    if arquivos:
-        extrair_texto_pdf(arquivos)
-        st.success("📁 Arquivos carregados com sucesso!")
-
-    # Campo de pergunta
-    pergunta = st.text_input("Digite sua pergunta:")
-
-    # Botão consultar
-    if st.button("Consultar"):
-
-        if pergunta:
-
-            resultado = buscar_memoria(pergunta)
-
-            if resultado:
-                st.success("📄 Informação encontrada nos arquivos:")
-
-                st.write(resultado)
-
-            else:
-                st.warning("🌐 Informação não localizada nos arquivos. Sugestão: consultar base externa.")
-
-        else:
-            st.warning("Digite uma pergunta.")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# ---------------- BIBLIOTECA ----------------
-elif menu == "Biblioteca":
-    st.markdown('<div class="block">', unsafe_allow_html=True)
-    st.subheader("📚 Biblioteca Técnica")
-    st.write("""
-    Utilize esta área para enviar:
-    - Manuais PDF
-    - Catálogos
-    - Lista de peças
-    - Procedimentos
-    - Diagramas
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- INDICADORES ----------------
-elif menu == "Indicadores":
-    st.markdown('<div class="block">', unsafe_allow_html=True)
-    st.subheader("📈 Indicadores")
-    st.metric("Equipamentos Cadastrados", "120")
-    st.metric("Arquivos Técnicos", "58")
-    st.metric("Consultas Hoje", "14")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------------- SOBRE ----------------
-elif menu == "Sobre":
-    st.markdown('<div class="block">', unsafe_allow_html=True)
-    st.subheader("🏭 Sobre o Projeto")
-    st.write("""
-    Plataforma piloto para suporte técnico da manutenção industrial.
-
-    Objetivos:
-    - Informações rápidas
-    - Manuais na palma da mão
-    - Apoio técnico aos colaboradores
-    - Evolução para IA corporativa multiplantas
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
