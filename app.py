@@ -65,15 +65,19 @@ menu = st.sidebar.radio(
 )
 
 # ---------------- FUNÇÃO LER PDF ----------------
-for file in uploaded_files:
-    docs = ler_pdf(file)
-    chunks = quebrar_texto(docs)
-    salvar_memoria(chunks)
+def extrair_texto_pdf(uploaded_files):
     texto_total = ""
+
     for file in uploaded_files:
+        docs = ler_pdf(file)
+        chunks = quebrar_texto(docs)
+        salvar_memoria(chunks)
+
         reader = PdfReader(file)
+
         for page in reader.pages:
             texto_total += page.extract_text() + "\n"
+
     return texto_total
 
 # ---------------- TELA PRINCIPAL ----------------
