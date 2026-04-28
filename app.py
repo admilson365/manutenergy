@@ -1,3 +1,4 @@
+from rag_engine import ler_pdf, quebrar_texto, salvar_memoria, buscar_memoria
 # app.py
 # ManutEnergy AI - Piloto Streamlit
 # Instalar dependências no requirements.txt:
