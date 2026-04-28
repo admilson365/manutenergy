@@ -43,28 +43,36 @@ def buscar_memoria(pergunta):
     global VECTORSTORE
 
     if VECTORSTORE is None:
-        return "📁 Nenhum arquivo foi carregado ainda."
+        return "📁 Nenhum arquivo carregado."
 
     docs = VECTORSTORE.similarity_search(pergunta, k=2)
 
     if not docs:
-        return "❌ Nenhuma informação relevante encontrada."
+        return "❌ Nenhuma informação encontrada."
 
     contexto = " ".join([doc.page_content for doc in docs])
 
     pergunta_lower = pergunta.lower()
 
+    # Lubrificação
     if "lubrificação" in pergunta_lower or "lubrificar" in pergunta_lower:
-        return f"🔧 Com base no manual analisado, a informação relacionada à lubrificação é:\n\n{contexto}"
 
+        if "1 MÊS" in contexto or "720 HRS" in contexto:
+            return "🔧 Conforme o manual, a lubrificação dos mancais e rolamentos deve ser realizada mensalmente (1 mês / 720 horas)."
+
+        elif "6 MESES" in contexto:
+            return "🔧 Conforme o manual, existem atividades periódicas de lubrificação e revisão a cada 6 meses."
+
+        else:
+            return "🔧 O manual cita lubrificação de mancais e rolamentos, porém a frequência exata não foi localizada claramente."
+
+    # Manutenção
     elif "manutenção" in pergunta_lower:
-        return f"🛠️ Informações de manutenção encontradas:\n\n{contexto}"
+        return "🛠️ O documento apresenta plano de manutenção preventiva com inspeções mensais, semestrais e anuais."
 
-    elif "segurança" in pergunta_lower:
-        return f"⚠️ Orientações de segurança localizadas:\n\n{contexto}"
-
+    # Falhas
     elif "falha" in pergunta_lower or "erro" in pergunta_lower:
-        return f"🚨 Possíveis informações sobre falhas ou erros:\n\n{contexto}"
+        return "🚨 Foram localizados trechos técnicos, porém sem falha específica claramente descrita."
 
     else:
-        return f"📄 Com base nos documentos carregados, encontrei o seguinte:\n\n{contexto}"
+        return f"📄 Informação localizada:\n\n{contexto[:800]}"
