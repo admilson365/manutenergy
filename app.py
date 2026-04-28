@@ -56,7 +56,7 @@ html, body, [class*="css"] {
 st.sidebar.title("⚙️ ManutEnergy AI")
 planta = st.sidebar.selectbox(
     "Selecione a Planta:",
-    ["Limeira", "Rio Claro", "Recife", "Outra"]
+    ["Amparo", "Mogi mirim", "Arceburgo", "Curitiba"]
 )
 
 menu = st.sidebar.radio(
@@ -115,8 +115,7 @@ if menu == "Assistente Técnico":
             if resultado:
                 st.success("📄 Informação encontrada nos arquivos:")
 
-                for item in resultado:
-                    st.write(item)
+                st.write(resultado)
 
             else:
                 st.warning("🌐 Informação não localizada nos arquivos. Sugestão: consultar base externa.")
