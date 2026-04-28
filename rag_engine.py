@@ -1,3 +1,5 @@
+import os
+from groq import Groq
 from pypdf import PdfReader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -13,6 +15,7 @@ def ler_pdf(file):
 
     for page in reader.pages:
         texto = page.extract_text()
+
         if texto:
             docs.append(Document(page_content=texto))
 
@@ -45,13 +48,31 @@ def buscar_memoria(pergunta):
 
     docs = VECTORSTORE.similarity_search(pergunta, k=3)
 
-    if not docs:
-        return "Nenhuma informação encontrada."
+    contexto = "\n\n".join([doc.page_content for doc in docs])
 
-    resposta = "📄 Resposta técnica localizada:\n\n"
+    client = Groq(
+        api_key=os.environ.get("GROQ_API_KEY")
+    )
 
-    for i, doc in enumerate(docs, 1):
-        trecho = doc.page_content.strip().replace("\n", " ")
-        resposta += f"{i}. {trecho[:500]}\n\n"
+    prompt = f"""
+Você é um especialista em manutenção industrial.
 
-    return resposta
+Responda de forma objetiva e técnica.
+
+PERGUNTA:
+{pergunta}
+
+CONTEXTO EXTRAÍDO DOS MANUAIS:
+{contexto}
+
+Responda resumindo e explicando claramente.
+"""
+
+    chat = client.chat.completions.create(
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        model="llama3-70b-8192"
+    )
+
+    return chat.choices[0].message.content
