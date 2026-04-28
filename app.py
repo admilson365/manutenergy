@@ -48,7 +48,8 @@ if st.button("Entrar"):
 
 else:
 
-    st.sidebar.success(f"Logado: {st.session_state.usuario}")
+   if st.session_state.get("logado", False):
+    st.sidebar.success(f"Logado: {st.session_state.get('usuario', '')}")
 
     if st.sidebar.button("Sair"):
         st.session_state.logado = False
