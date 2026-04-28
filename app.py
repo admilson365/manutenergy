@@ -65,7 +65,10 @@ menu = st.sidebar.radio(
 )
 
 # ---------------- FUNÇÃO LER PDF ----------------
-def extrair_texto_pdf(uploaded_files):
+for file in uploaded_files:
+    docs = ler_pdf(file)
+    chunks = quebrar_texto(docs)
+    salvar_memoria(chunks)
     texto_total = ""
     for file in uploaded_files:
         reader = PdfReader(file)
