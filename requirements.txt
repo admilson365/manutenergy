@@ -1,9 +1,7 @@
 streamlit
-pypdf
 openai
 langchain
+langchain-community
 faiss-cpu
 tiktoken
 pypdf
-unstructured
-python-dotenv
