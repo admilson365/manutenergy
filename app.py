@@ -87,7 +87,9 @@ if menu == "Assistente Técnico":
     st.subheader("🤖 Chat Técnico")
 
     pergunta = st.text_input("Digite sua pergunta:")
-
+if pergunta:
+    resultado = buscar_memoria(pergunta)
+    st.write(resultado)
     arquivos = st.file_uploader(
         "Envie manuais PDF para consulta:",
         type=["pdf"],
