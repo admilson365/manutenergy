@@ -10,7 +10,7 @@ usernames = ["admin", "tecnico1", "supervisor"]
 
 passwords = ["1234", "1234", "1234"]
 
-hashed_passwords = stauth.Hasher(passwords).generate()
+hashed_passwords = stauth.Hasher.hash_passwords(passwords)
 
 authenticator = stauth.Authenticate(
     names,
