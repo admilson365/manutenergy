@@ -1,13 +1,11 @@
-from langchain_community.document_loaders import PyPDFLoader
+from pypdf import PdfReader
+from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 VECTORSTORE = None
 
-
-from pypdf import PdfReader
-from langchain_core.documents import Document
 
 def ler_pdf(file):
     reader = PdfReader(file)
@@ -28,17 +26,18 @@ def quebrar_texto(docs):
         chunk_size=1000,
         chunk_overlap=200
     )
+
     return splitter.split_documents(docs)
 
 
 def salvar_memoria(textos):
     global VECTORSTORE
 
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
 
     VECTORSTORE = FAISS.from_documents(textos, embeddings)
-
-    return VECTORSTORE
 
 
 def buscar_memoria(pergunta):
@@ -49,4 +48,4 @@ def buscar_memoria(pergunta):
 
     docs = VECTORSTORE.similarity_search(pergunta, k=4)
 
-    return [d.page_content for d in docs]
+    return [doc.page_content for doc in docs]
