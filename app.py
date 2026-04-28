@@ -1,40 +1,43 @@
 import streamlit as st
-import streamlit_authenticator as stauth
 from rag_engine import ler_pdf, quebrar_texto, salvar_memoria, buscar_memoria
 
 st.set_page_config(page_title="ManutEnergy AI", layout="wide")
 
-# USUÁRIOS
-names = ["Admilson", "Tecnico 1", "Supervisor"]
-usernames = ["admin", "tecnico1", "supervisor"]
+# LOGIN SIMPLES
+usuarios = {
+    "admin": "1234",
+    "tecnico1": "1234",
+    "supervisor": "1234"
+}
 
-passwords = ["1234", "1234", "1234"]
+if "logado" not in st.session_state:
+    st.session_state.logado = False
 
-hashed_passwords = stauth.Hasher.hash_passwords(passwords)
+if not st.session_state.logado:
 
-authenticator = stauth.Authenticate(
-    names,
-    usernames,
-    hashed_passwords,
-    "manutenergy_cookie",
-    "abcdef",
-    cookie_expiry_days=7
-)
+    st.title("🔐 Login - ManutEnergy AI")
 
-name, authentication_status, username = authenticator.login("Login", "main")
+    usuario = st.text_input("Usuário")
+    senha = st.text_input("Senha", type="password")
 
-if authentication_status == False:
-    st.error("Usuário ou senha incorretos")
+    if st.button("Entrar"):
 
-elif authentication_status == None:
-    st.warning("Digite usuário e senha")
+        if usuario in usuarios and usuarios[usuario] == senha:
+            st.session_state.logado = True
+            st.session_state.usuario = usuario
+            st.rerun()
+        else:
+            st.error("Usuário ou senha inválidos")
 
-elif authentication_status:
+else:
 
-    authenticator.logout("Sair", "sidebar")
+    st.sidebar.success(f"Logado: {st.session_state.usuario}")
+
+    if st.sidebar.button("Sair"):
+        st.session_state.logado = False
+        st.rerun()
 
     st.title("🏭 ManutEnergy AI")
-    st.success(f"Bem-vindo, {name}")
 
     arquivos = st.file_uploader(
         "Envie manuais PDF",
@@ -52,7 +55,7 @@ elif authentication_status:
         chunks = quebrar_texto(docs_total)
         salvar_memoria(chunks)
 
-        st.success("Arquivos carregados.")
+        st.success("Arquivos processados.")
 
     pergunta = st.text_input("Digite sua pergunta técnica")
 
