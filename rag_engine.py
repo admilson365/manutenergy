@@ -9,12 +9,10 @@ VECTORSTORE = None
 
 def ler_pdf(file):
     reader = PdfReader(file)
-
     docs = []
 
     for page in reader.pages:
         texto = page.extract_text()
-
         if texto:
             docs.append(Document(page_content=texto))
 
@@ -23,56 +21,37 @@ def ler_pdf(file):
 
 def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=100
+        chunk_size=400,
+        chunk_overlap=80
     )
-
     return splitter.split_documents(docs)
 
 
-def salvar_memoria(textos):
+def salvar_memoria(chunks):
     global VECTORSTORE
 
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
-    VECTORSTORE = FAISS.from_documents(textos, embeddings)
+    VECTORSTORE = FAISS.from_documents(chunks, embeddings)
+
 
 def buscar_memoria(pergunta):
     global VECTORSTORE
 
     if VECTORSTORE is None:
-        return "📁 Nenhum arquivo carregado."
+        return "Nenhum documento carregado."
 
-    docs = VECTORSTORE.similarity_search(pergunta, k=2)
+    docs = VECTORSTORE.similarity_search(pergunta, k=3)
 
     if not docs:
-        return "❌ Nenhuma informação encontrada."
+        return "Nenhuma informação encontrada."
 
-    contexto = " ".join([doc.page_content for doc in docs])
+    resposta = "📄 Resposta técnica localizada:\n\n"
 
-    pergunta_lower = pergunta.lower()
+    for i, doc in enumerate(docs, 1):
+        trecho = doc.page_content.strip().replace("\n", " ")
+        resposta += f"{i}. {trecho[:500]}\n\n"
 
-    # Lubrificação
-    if "lubrificação" in pergunta_lower or "lubrificar" in pergunta_lower:
-
-        if "1 MÊS" in contexto or "720 HRS" in contexto:
-            return "🔧 Conforme o manual, a lubrificação dos mancais e rolamentos deve ser realizada mensalmente (1 mês / 720 horas)."
-
-        elif "6 MESES" in contexto:
-            return "🔧 Conforme o manual, existem atividades periódicas de lubrificação e revisão a cada 6 meses."
-
-        else:
-            return "🔧 O manual cita lubrificação de mancais e rolamentos, porém a frequência exata não foi localizada claramente."
-
-    # Manutenção
-    elif "manutenção" in pergunta_lower:
-        return "🛠️ O documento apresenta plano de manutenção preventiva com inspeções mensais, semestrais e anuais."
-
-    # Falhas
-    elif "falha" in pergunta_lower or "erro" in pergunta_lower:
-        return "🚨 Foram localizados trechos técnicos, porém sem falha específica claramente descrita."
-
-    else:
-        return f"📄 Informação localizada:\n\n{contexto[:800]}"
+    return resposta
