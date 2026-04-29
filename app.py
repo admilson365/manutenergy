@@ -91,26 +91,39 @@ else:
 
     pergunta = st.text_input("Digite sua pergunta técnica")
 
-    if st.button("Consultar"):
+   if st.button("Consultar"):
 
-        if arquivos:
+    texto_total = ""
 
-            texto_total = ""
+    if arquivos:
 
-            for arquivo in arquivos:
-                reader = PdfReader(arquivo)
-                for page in reader.pages:
-                    conteudo = page.extract_text()
-                    if conteudo:
-                        texto_total += conteudo + "\n"
+        for arquivo in arquivos:
+            reader = PdfReader(arquivo)
+            for page in reader.pages:
+                conteudo = page.extract_text()
+                if conteudo:
+                    texto_total += conteudo + "\n"
 
-           if trechos:
-    st.write("📌 Trechos encontrados:")
+        trechos = []
 
-    for t in trechos:
-        st.write(t)
+        if pergunta:
+            for palavra in pergunta.lower().split():
+                if palavra in texto_total.lower():
+                    idx = texto_total.lower().find(palavra)
+                    trecho = texto_total[max(0, idx-80): idx+200]
+                    trechos.append(trecho)
 
-else:
-    st.warning("Nenhum trecho encontrado no documento.")
+        if trechos:
+            st.write("📌 Trechos encontrados:")
 
-# fim da consulta
+            for t in trechos:
+                st.write(t)
+
+        else:
+            st.warning("Nenhum trecho encontrado no documento.")
+
+    else:
+        st.info("📁 Nenhum arquivo enviado")
+
+        if pergunta:
+            st.write("Resposta:", pergunta)
