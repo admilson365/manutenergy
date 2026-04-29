@@ -1,19 +1,15 @@
 import streamlit as st
 import json
 import os
-from hashlib import sha256
 
 ARQUIVO_USERS = "users.json"
 
 
-# ========================
-# USERS
-# ========================
 def carregar_usuarios():
     if os.path.exists(ARQUIVO_USERS):
         with open(ARQUIVO_USERS, "r") as f:
             return json.load(f)
-    return {}
+    return {"admin": "1234"}
 
 
 def salvar_usuarios(users):
@@ -21,13 +17,7 @@ def salvar_usuarios(users):
         json.dump(users, f)
 
 
-def hash_senha(senha):
-    return sha256(senha.encode()).hexdigest()
-
-
-# ========================
-# INIT SESSION
-# ========================
+# init
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
@@ -35,30 +25,28 @@ if "logado" not in st.session_state:
 usuarios = carregar_usuarios()
 
 
-# ========================
-# LOGIN PAGE
-# ========================
+# ======================
+# LOGIN
+# ======================
 if not st.session_state.logado:
 
-    st.title("🔐 ManutEnergy AI Login")
+    st.title("ManutEnergy AI")
 
     usuario = st.text_input("Usuário")
     senha = st.text_input("Senha", type="password")
 
     if st.button("Entrar"):
 
-        if usuario in usuarios and usuarios[usuario] == hash_senha(senha):
+        if usuario in usuarios and usuarios[usuario] == senha:
             st.session_state.logado = True
             st.session_state.usuario = usuario
             st.rerun()
-
         else:
             st.error("Usuário ou senha inválidos")
 
-
-# ========================
-# SISTEMA LOGADO
-# ========================
+# ======================
+# SISTEMA
+# ======================
 else:
 
     st.sidebar.success(f"Logado: {st.session_state.usuario}")
@@ -67,33 +55,23 @@ else:
         st.session_state.logado = False
         st.rerun()
 
-    # ========================
-    # CADASTRO DE USUÁRIO
-    # ========================
-    st.sidebar.subheader("👤 Criar usuário")
+    st.title("🏭 ManutEnergy AI")
 
-    novo_user = st.sidebar.text_input("Novo usuário")
-    nova_senha = st.sidebar.text_input("Nova senha", type="password")
+    st.info("Sistema funcionando")
 
-    if st.sidebar.button("Criar usuário"):
+    # cadastro simples
+    st.sidebar.subheader("Criar usuário")
+
+    novo = st.sidebar.text_input("Novo usuário")
+    senha_nova = st.sidebar.text_input("Senha", type="password")
+
+    if st.sidebar.button("Criar"):
 
         usuarios = carregar_usuarios()
 
-        if novo_user in usuarios:
+        if novo in usuarios:
             st.sidebar.error("Usuário já existe")
         else:
-            usuarios[novo_user] = hash_senha(nova_senha)
+            usuarios[novo] = senha_nova
             salvar_usuarios(usuarios)
-            st.sidebar.success("Usuário criado com sucesso")
-
-    # ========================
-    # SISTEMA IA (placeholder)
-    # ========================
-    st.title("🏭 ManutEnergy AI")
-
-    st.info("Sistema logado funcionando")
-
-    pergunta = st.text_input("Digite sua pergunta")
-
-    if st.button("Consultar") and pergunta:
-        st.write("Resposta simulada:", pergunta)
+            st.sidebar.success("Criado com sucesso")
