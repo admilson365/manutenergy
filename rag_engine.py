@@ -135,4 +135,4 @@ TEXTO:
         model="llama-3.1-8b-instant"
     )
 
-    return f"--- CONTEXTO ENCONTRADO ---\n{contexto}\n\n--- RESPOSTA ---\n{chat.choices[0].message.content}"
+   return chat.choices[0].message.content 
