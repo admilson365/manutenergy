@@ -104,7 +104,12 @@ else:
                     if conteudo:
                         texto_total += conteudo + "\n"
 
-            if pergunta and any(p in texto_total.lower() for p in pergunta.lower().split()):
+           if trechos:
+    st.write("📌 Trechos encontrados:")
+    for t in trechos:
+        st.write(t)
+else:
+    st.warning("Nenhum trecho encontrado no documento.")
                
             else:
                 st.warning("🌐 Informação não localizada nos arquivos.")
