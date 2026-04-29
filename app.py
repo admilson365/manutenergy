@@ -57,7 +57,7 @@ else:
         st.rerun()
 
     # =========================
-    # CADASTRO
+    # CADASTRO DE USUÁRIO
     # =========================
     st.sidebar.subheader("👤 Criar usuário")
 
@@ -76,41 +76,40 @@ else:
             st.sidebar.success("Usuário criado")
 
     # =========================
-    # IA + UPLOAD
+    # IA
     # =========================
-
     st.title("🏭 ManutEnergy AI")
 
-   st.subheader("🤖 Assistente Técnico")
+    st.subheader("🤖 Assistente Técnico")
 
-arquivos = st.file_uploader(
-    "Envie manuais PDF",
-    type=["pdf"],
-    accept_multiple_files=True
-)
+    arquivos = st.file_uploader(
+        "Envie manuais PDF",
+        type=["pdf"],
+        accept_multiple_files=True
+    )
 
-pergunta = st.text_input("Digite sua pergunta técnica")
+    pergunta = st.text_input("Digite sua pergunta técnica")
 
-if st.button("Consultar"):
+    if st.button("Consultar"):
 
-    if arquivos:
+        if arquivos:
 
-        texto_total = ""
+            texto_total = ""
 
-        for arquivo in arquivos:
-            reader = PdfReader(arquivo)
-            for page in reader.pages:
-                conteudo = page.extract_text()
-                if conteudo:
-                    texto_total += conteudo + "\n"
+            for arquivo in arquivos:
+                reader = PdfReader(arquivo)
+                for page in reader.pages:
+                    conteudo = page.extract_text()
+                    if conteudo:
+                        texto_total += conteudo + "\n"
 
-        if pergunta and any(p in texto_total.lower() for p in pergunta.lower().split()):
-            st.success("📄 Informação encontrada nos arquivos internos.")
+            if pergunta and any(p in texto_total.lower() for p in pergunta.lower().split()):
+                st.success("📄 Informação encontrada nos arquivos internos.")
+            else:
+                st.warning("🌐 Informação não localizada nos arquivos.")
+
         else:
-            st.warning("🌐 Informação não localizada nos arquivos.")
+            st.info("📁 Nenhum arquivo enviado")
 
-    else:
-        st.info("📁 Nenhum arquivo enviado")
-
-        if pergunta:
-            st.write("Resposta:", pergunta)
+            if pergunta:
+                st.write("Resposta:", pergunta)
