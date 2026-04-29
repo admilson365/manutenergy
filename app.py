@@ -1,3 +1,4 @@
+from PyPDF2 import PdfReader
 import streamlit as st
 import json
 import os
