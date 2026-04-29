@@ -66,7 +66,7 @@ else:
 
     pergunta = st.text_input("Pergunta técnica")
 
-    if st.button("Consultar"):
+if st.button("Consultar"):
 
     resposta = buscar_memoria(pergunta)
 
