@@ -26,7 +26,9 @@ if "logado" not in st.session_state:
 
 
 usuarios = carregar_usuarios() or {}
-
+def salvar_usuarios(usuarios):
+    with open("users.json", "w") as f:
+        json.dump(usuarios, f)
 
 # =========================
 # LOGIN
