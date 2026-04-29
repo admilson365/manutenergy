@@ -3,7 +3,12 @@ import json
 import os
 from hashlib import sha256
 from PyPDF2 import PdfReader
-
+from rag_engine import (
+    ler_pdf,
+    quebrar_texto,
+    salvar_memoria,
+    buscar_memoria
+)
 # =========================
 # FUNÇÕES
 # =========================
@@ -54,7 +59,29 @@ if not st.session_state.logado:
 # SISTEMA (DEPOIS DO LOGIN)
 # =========================
 else:
+else:
 
+    st.title("🏭 ManutEnergy AI")
+
+    # =========================
+    # UPLOAD PDF
+    # =========================
+    arquivo = st.file_uploader("Envie PDF", type=["pdf"])
+
+    if arquivo:
+        docs = ler_pdf(arquivo)
+        chunks = quebrar_texto(docs)
+        salvar_memoria(chunks)
+
+    # =========================
+    # PERGUNTA IA
+    # =========================
+    pergunta = st.text_input("Pergunta técnica")
+
+    if st.button("Consultar"):
+
+        resposta = buscar_memoria(pergunta)
+        st.write(resposta)
     st.success(f"Logado: {st.session_state.usuario}")
 
     st.title("🏭 ManutEnergy AI")
