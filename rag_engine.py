@@ -15,16 +15,18 @@ def ler_pdf(file):
 
     for page in reader.pages:
         texto = page.extract_text()
+
         if texto:
-           texto = " ".join(texto.split()) 
+            texto = " ".join(texto.split())
+            docs.append(Document(page_content=texto))
 
     return docs
 
 
 def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
-    chunk_size=900,
-chunk_overlap=200    
+        chunk_size=900,
+        chunk_overlap=200
     )
     return splitter.split_documents(docs)
 
@@ -64,13 +66,12 @@ def buscar_memoria(pergunta):
 
     if VECTORSTORE is None:
         return "Nenhum documento carregado."
-        
-docs = VECTORSTORE.similarity_search(
-    pergunta,
-    k=6
-)
-   
-        fetch_k=20
+
+    pergunta = pergunta.lower().strip()
+
+    docs = VECTORSTORE.similarity_search(
+        pergunta,
+        k=6
     )
 
     contexto = "\n\n".join([
@@ -87,24 +88,18 @@ docs = VECTORSTORE.similarity_search(
 Você é um engenheiro de manutenção industrial experiente.
 
 REGRAS:
-- Responda de forma direta, técnica e objetiva
-- Evite explicações longas ou repetitivas
-- Não use formato fixo de resposta
-- Não invente informações baseadas no manual
-
-IMPORTANTE:
-- Use primeiro o contexto do manual
-- Se NÃO houver informação suficiente no manual, use conhecimento técnico geral de mercado
-- Quando usar conhecimento externo, informe claramente no início:
+- Responda de forma direta e técnica
+- Sem explicação longa
+- Use o manual primeiro
+- Se não encontrar, use conhecimento de mercado
+- Se usar mercado, comece com:
   "SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO"
 
 PERGUNTA:
 {pergunta}
 
-CONTEXTO DO MANUAL:
+CONTEXTO:
 {contexto}
-
-Responda de forma prática e direta.
 """
 
     chat = client.chat.completions.create(
