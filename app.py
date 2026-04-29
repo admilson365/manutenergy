@@ -95,12 +95,18 @@ else:
 
         if arquivos:
 
-            texto_total = ""
+            from PyPDF2 import PdfReader
 
-            for arquivo in arquivos:
-                texto_total += str(arquivo.read())
+texto_total = ""
 
-            if pergunta.lower() in texto_total.lower():
+for arquivo in arquivos:
+    reader = PdfReader(arquivo)
+    for page in reader.pages:
+        conteudo = page.extract_text()
+        if conteudo:
+            texto_total += conteudo + "\n"
+
+          if any(p in texto_total.lower() for p in pergunta.lower().split()):
                 st.success("📄 Informação encontrada nos arquivos internos.")
             else:
                 st.warning("🌐 Informação não localizada nos arquivos.")
