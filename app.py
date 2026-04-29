@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import os
 from hashlib import sha256
-
+from PyPDF2 import PdfReader
 
 # =========================
 # FUNÇÕES
