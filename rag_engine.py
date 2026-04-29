@@ -75,10 +75,21 @@ def buscar_memoria(pergunta):
     manutenção ajuste regulagem tensionamento corrente sistema mecânico transporte
     """
 
-    docs = VECTORSTORE.similarity_search(
-        reforco,
-        k=8
-    )
+    docs = VECTORSTORE.similarity_search(pergunta, k=15)
+
+# filtro por palavra-chave (FORTE)
+palavras = pergunta.split()
+
+docs_filtrados = []
+
+for doc in docs:
+    texto = doc.page_content.lower()
+    if any(p in texto for p in palavras):
+        docs_filtrados.append(doc)
+
+# fallback se não encontrar nada
+if not docs_filtrados:
+    docs_filtrados = docs[:5]
 
     contexto = "\n\n".join([
         doc.page_content
