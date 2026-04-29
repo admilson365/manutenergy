@@ -1,16 +1,20 @@
-from PyPDF2 import PdfReader
 import streamlit as st
 import json
 import os
+from hashlib import sha256
+from PyPDF2 import PdfReader
 
 ARQUIVO_USERS = "users.json"
 
 
+# =========================
+# USERS
+# =========================
 def carregar_usuarios():
     if os.path.exists(ARQUIVO_USERS):
         with open(ARQUIVO_USERS, "r") as f:
             return json.load(f)
-    return {"admin": "1234"}
+    return {"admin": sha256("1234".encode()).hexdigest()}
 
 
 def salvar_usuarios(users):
@@ -18,7 +22,13 @@ def salvar_usuarios(users):
         json.dump(users, f)
 
 
-# init
+def hash_senha(senha):
+    return sha256(senha.encode()).hexdigest()
+
+
+# =========================
+# SESSION
+# =========================
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
@@ -26,29 +36,31 @@ if "logado" not in st.session_state:
 usuarios = carregar_usuarios()
 
 
-# ======================
+# =========================
 # LOGIN
-# ======================
+# =========================
 if not st.session_state.logado:
 
-    st.title("ManutEnergy AI")
+    st.title("🔐 ManutEnergy AI")
 
     usuario = st.text_input("Usuário")
     senha = st.text_input("Senha", type="password")
 
     if st.button("Entrar"):
 
-        if usuario in usuarios and usuarios[usuario] == senha:
+        senha_hash = hash_senha(senha)
+
+        if usuario in usuarios and usuarios[usuario] == senha_hash:
             st.session_state.logado = True
             st.session_state.usuario = usuario
             st.rerun()
         else:
             st.error("Usuário ou senha inválidos")
 
-# ======================
-# SISTEMA
-# ======================
 
+# =========================
+# SISTEMA
+# =========================
 else:
 
     st.sidebar.success(f"Logado: {st.session_state.usuario}")
@@ -57,9 +69,9 @@ else:
         st.session_state.logado = False
         st.rerun()
 
-    # =========================
-    # CADASTRO DE USUÁRIO
-    # =========================
+    # -------------------------
+    # CADASTRO
+    # -------------------------
     st.sidebar.subheader("👤 Criar usuário")
 
     novo = st.sidebar.text_input("Usuário novo")
@@ -76,11 +88,10 @@ else:
             salvar_usuarios(usuarios)
             st.sidebar.success("Usuário criado")
 
-    # =========================
+    # -------------------------
     # IA
-    # =========================
+    # -------------------------
     st.title("🏭 ManutEnergy AI")
-
     st.subheader("🤖 Assistente Técnico")
 
     arquivos = st.file_uploader(
@@ -91,39 +102,37 @@ else:
 
     pergunta = st.text_input("Digite sua pergunta técnica")
 
-  if st.button("Consultar"):
+    if st.button("Consultar"):
 
-    texto_total = ""
+        texto_total = ""
 
-    if arquivos:
+        if arquivos:
 
-        for arquivo in arquivos:
-            reader = PdfReader(arquivo)
-            for page in reader.pages:
-                conteudo = page.extract_text()
-                if conteudo:
-                    texto_total += conteudo + "\n"
+            for arquivo in arquivos:
+                reader = PdfReader(arquivo)
+                for page in reader.pages:
+                    conteudo = page.extract_text()
+                    if conteudo:
+                        texto_total += conteudo + "\n"
 
-        trechos = []
+            trechos = []
 
-        if pergunta:
-            for palavra in pergunta.lower().split():
-                if palavra in texto_total.lower():
-                    idx = texto_total.lower().find(palavra)
-                    trecho = texto_total[max(0, idx-80): idx+200]
-                    trechos.append(trecho)
+            if pergunta:
+                for palavra in pergunta.lower().split():
+                    if palavra in texto_total.lower():
+                        idx = texto_total.lower().find(palavra)
+                        trecho = texto_total[max(0, idx-80): idx+200]
+                        trechos.append(trecho)
 
-        if trechos:
-            st.write("📌 Trechos encontrados:")
-
-            for t in trechos:
-                st.write(t)
+            if trechos:
+                st.write("📌 Trechos encontrados:")
+                for t in trechos:
+                    st.write(t)
+            else:
+                st.warning("Nenhum trecho encontrado no documento.")
 
         else:
-            st.warning("Nenhum trecho encontrado no documento.")
+            st.info("📁 Nenhum arquivo enviado")
 
-    else:
-        st.info("📁 Nenhum arquivo enviado")
-
-        if pergunta:
-            st.write("Resposta:", pergunta)
+            if pergunta:
+                st.write("Resposta:", pergunta)
