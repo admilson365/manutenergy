@@ -77,17 +77,17 @@ def buscar_memoria(pergunta):
 
     docs = VECTORSTORE.similarity_search(pergunta, k=15)
 
-# filtro por palavra-chave (FORTE)
-palavras = pergunta.split()
+    # filtro por palavra-chave (FORTE)
+    palavras = pergunta.split()
 
-docs_filtrados = []
+    docs_filtrados = []
 
 for doc in docs:
     texto = doc.page_content.lower()
     if any(p in texto for p in palavras):
         docs_filtrados.append(doc)
 
-# fallback se não encontrar nada
+    # fallback se não encontrar nada
 if not docs_filtrados:
     docs_filtrados = docs[:5]
 
