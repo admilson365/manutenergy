@@ -2,7 +2,6 @@ import streamlit as st
 import json
 import os
 from hashlib import sha256
-
 from rag_engine import (
     ler_pdf,
     quebrar_texto,
