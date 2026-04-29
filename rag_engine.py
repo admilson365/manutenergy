@@ -71,17 +71,17 @@ def buscar_memoria(pergunta):
         fetch_k=20
     )
 
-   contexto = "\n\n".join([
-    doc.page_content
-    for doc in docs
-    if len(doc.page_content) > 80
-])
+    contexto = "\n\n".join([
+        doc.page_content
+        for doc in docs
+        if len(doc.page_content) > 80
+    ])
 
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY")
     )
 
- prompt = f"""
+    prompt = f"""
 Você é um engenheiro de manutenção industrial experiente.
 
 REGRAS:
