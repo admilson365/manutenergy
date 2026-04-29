@@ -12,7 +12,7 @@ def carregar_usuarios():
     if os.path.exists("users.json"):
         with open("users.json", "r") as f:
             return json.load(f)
-                return {}
+    return {}
 
 
 def salvar_usuarios(usuarios):
