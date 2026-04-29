@@ -1,60 +1,28 @@
 import streamlit as st
 import json
 import os
-from hashlib import sha256
 from PyPDF2 import PdfReader
-
-ARQUIVO_USERS = "users.json"
-
-
-# =========================
-# USERS
-# =========================
-def carregar_usuarios():
-    if os.path.exists(ARQUIVO_USERS):
-        with open(ARQUIVO_USERS, "r") as f:
-            return json.load(f)
-    return {"admin": sha256("1234".encode()).hexdigest()}
-
-
-def salvar_usuarios(users):
-    with open(ARQUIVO_USERS, "w") as f:
-        json.dump(users, f)
-
 from hashlib import sha256
 
 def hash_senha(senha):
     return sha256(senha.encode()).hexdigest()
 
 
-if "logado" not in st.session_state:
-    st.session_state.logado = False
-
-
 usuarios = carregar_usuarios()
 
+usuario = st.text_input("Usuário")
+senha = st.text_input("Senha", type="password")
 
-# =========================
-# LOGIN
-# =========================
-if not st.session_state.logado:
+if st.button("Entrar"):
 
-    st.title("🔐 ManutEnergy AI")
+    senha_hash = hash_senha(senha)
 
-    usuario = st.text_input("Usuário")
-    senha = st.text_input("Senha", type="password")
-
-    if st.button("Entrar"):
-
-        senha_hash = hash_senha(senha)
-
-        if usuario in usuarios and usuarios[usuario] == senha_hash:
-            st.session_state.logado = True
-            st.session_state.usuario = usuario
-            st.rerun()
-
-        else:
-            st.error("Usuário ou senha inválidos")
+    if usuario in usuarios and usuarios[usuario] == senha_hash:
+        st.session_state.logado = True
+        st.session_state.usuario = usuario
+        st.rerun()
+    else:
+        st.error("Usuário ou senha inválidos")
 
 # =========================
 # SISTEMA
