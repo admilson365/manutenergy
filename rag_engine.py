@@ -135,4 +135,6 @@ TEXTO:
         model="llama-3.1-8b-instant"
     )
 
-   return chat.choices[0].message.content 
+    resposta = chat.choices[0].message.content
+
+    return resposta.split("\n")[0]    
