@@ -67,10 +67,11 @@ def buscar_memoria(pergunta):
     if VECTORSTORE is None:
         return "Nenhum documento carregado."
 
-    pergunta = pergunta.lower().strip()
-# reforço técnico de busca
-reforco = f"""
-{pergunta}
+pergunta = pergunta.lower().strip()
+
+    # reforço técnico de busca
+    reforco = f"""
+    {pergunta}
 
 contexto técnico:
 - manutenção
