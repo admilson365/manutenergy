@@ -9,7 +9,7 @@ from rag_engine import (ler_pdf,quebrar_texto,salvar_memoria,buscar_memoria)
 
 
 def carregar_usuarios():
-if os.path.exists("users.json"):
+    if os.path.exists("users.json"):
         with open("users.json", "r") as f:
             return json.load(f)
     return {}
