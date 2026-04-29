@@ -9,3 +9,4 @@ langchain-core
 langchain-text-splitters
 groq
 streamlit-authenticator
+PyPDF2
