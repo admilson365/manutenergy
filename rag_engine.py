@@ -70,7 +70,11 @@ def buscar_memoria(pergunta):
     pergunta = pergunta.lower().strip()
 
     # busca ampla inicial
-    docs = VECTORSTORE.similarity_search(pergunta, k=15)
+    docs = VECTORSTORE.max_marginal_relevance_search(
+        pergunta,
+        k=8,
+        fetch_k=30
+    )
 
     # filtro por palavra-chave (busca híbrida)
     palavras = pergunta.split()
@@ -78,7 +82,7 @@ def buscar_memoria(pergunta):
 
     for doc in docs:
         texto = doc.page_content.lower()
-        if any(p in texto for p in palavras):
+        if all(p in texto for p in palavras):
             docs_filtrados.append(doc)
 
     # fallback se não encontrar nada relevante
