@@ -2,7 +2,6 @@ import streamlit as st
 import json
 import os
 from hashlib import sha256
-from PyPDF2 import PdfReader
 
 from rag_engine import (
     ler_pdf,
@@ -26,6 +25,11 @@ def carregar_usuarios():
     return {}
 
 
+def salvar_usuarios(usuarios):
+    with open("users.json", "w") as f:
+        json.dump(usuarios, f)
+
+
 # =========================
 # SESSION
 # =========================
@@ -33,15 +37,15 @@ if "logado" not in st.session_state:
     st.session_state.logado = False
 
 
-usuarios = carregar_usuarios() or {}
-def salvar_usuarios(usuarios):
-    with open("users.json", "w") as f:
-        json.dump(usuarios, f)
+usuarios = carregar_usuarios()
+
 
 # =========================
 # LOGIN
 # =========================
 if not st.session_state.logado:
+
+    st.title("Login")
 
     usuario = st.text_input("Usuário")
     senha = st.text_input("Senha", type="password")
@@ -59,15 +63,12 @@ if not st.session_state.logado:
 
 
 # =========================
-# SISTEMA (DEPOIS DO LOGIN)
+# SISTEMA (IA)
 # =========================
 else:
 
     st.title("🏭 ManutEnergy AI")
 
-    # =========================
-    # UPLOAD PDF
-    # =========================
     arquivo = st.file_uploader("Envie PDF", type=["pdf"])
 
     if arquivo:
@@ -75,98 +76,26 @@ else:
         chunks = quebrar_texto(docs)
         salvar_memoria(chunks)
 
-    # =========================
-    # PERGUNTA IA
-    # =========================
     pergunta = st.text_input("Pergunta técnica")
 
     if st.button("Consultar"):
-
         resposta = buscar_memoria(pergunta)
         st.write(resposta)
-    st.success(f"Logado: {st.session_state.usuario}")
-
-    st.title("🏭 ManutEnergy AI")
-
-    st.write("Aqui entra sua IA, upload de PDF, etc.")
-# -------------------------
-# CADASTRO
-# -------------------------
-st.sidebar.subheader("👤 Criar usuário")
-
-novo = st.sidebar.text_input("Usuário novo")
-senha_nova = st.sidebar.text_input("Senha nova", type="password")
-
-if st.sidebar.button("Criar"):
-
-    usuarios = carregar_usuarios()
-
-    if novo in usuarios:
-        st.sidebar.error("Usuário já existe")
-    else:
-        usuarios[novo] = hash_senha(senha_nova)
-        salvar_usuarios(usuarios)
-        st.sidebar.success("Usuário criado")
 
 
-# -------------------------
-# LOGIN (CORRETO)
-# -------------------------
-usuarios = carregar_usuarios()
+    # =========================
+    # CADASTRO
+    # =========================
+    st.sidebar.subheader("👤 Criar usuário")
 
-senha_hash = hash_senha(senha)
+    novo = st.sidebar.text_input("Usuário novo")
+    senha_nova = st.sidebar.text_input("Senha nova", type="password")
 
-if usuario in usuarios and usuarios[usuario] == senha_hash:
-    st.session_state.logado = True
-    st.session_state.usuario = usuario
-    st.rerun()
-else:
-    st.error("Usuário ou senha inválidos")
-    # -------------------------
-    # IA
-    # -------------------------
-    st.title("🏭 ManutEnergy AI")
-    st.subheader("🤖 Assistente Técnico")
+    if st.sidebar.button("Criar"):
 
-    arquivos = st.file_uploader(
-        "Envie manuais PDF",
-        type=["pdf"],
-        accept_multiple_files=True
-    )
-
-    pergunta = st.text_input("Digite sua pergunta técnica")
-
-    if st.button("Consultar"):
-
-        texto_total = ""
-
-        if arquivos:
-
-            for arquivo in arquivos:
-                reader = PdfReader(arquivo)
-                for page in reader.pages:
-                    conteudo = page.extract_text()
-                    if conteudo:
-                        texto_total += conteudo + "\n"
-
-            trechos = []
-
-            if pergunta:
-                for palavra in pergunta.lower().split():
-                    if palavra in texto_total.lower():
-                        idx = texto_total.lower().find(palavra)
-                        trecho = texto_total[max(0, idx-80): idx+200]
-                        trechos.append(trecho)
-
-            if trechos:
-                st.write("📌 Trechos encontrados:")
-                for t in trechos:
-                    st.write(t)
-            else:
-                st.warning("Nenhum trecho encontrado no documento.")
-
+        if novo in usuarios:
+            st.sidebar.error("Usuário já existe")
         else:
-            st.info("📁 Nenhum arquivo enviado")
-
-            if pergunta:
-                st.write("Resposta:", pergunta)
+            usuarios[novo] = hash_senha(senha_nova)
+            salvar_usuarios(usuarios)
+            st.sidebar.success("Usuário criado")
