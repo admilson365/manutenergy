@@ -91,28 +91,26 @@ else:
 
     pergunta = st.text_input("Digite sua pergunta técnica")
 
-    if st.button("Consultar"):
+  if st.button("Consultar"):
 
-        if arquivos:
+    if arquivos:
 
-            from PyPDF2 import PdfReader
+        texto_total = ""
 
-texto_total = ""
+        for arquivo in arquivos:
+            reader = PdfReader(arquivo)
+            for page in reader.pages:
+                conteudo = page.extract_text()
+                if conteudo:
+                    texto_total += conteudo + "\n"
 
-for arquivo in arquivos:
-    reader = PdfReader(arquivo)
-    for page in reader.pages:
-        conteudo = page.extract_text()
-        if conteudo:
-            texto_total += conteudo + "\n"
-
-          if any(p in texto_total.lower() for p in pergunta.lower().split()):
-                st.success("📄 Informação encontrada nos arquivos internos.")
-            else:
-                st.warning("🌐 Informação não localizada nos arquivos.")
-
+        if any(p in texto_total.lower() for p in pergunta.lower().split()):
+            st.success("📄 Informação encontrada nos arquivos internos.")
         else:
-            st.info("📁 Nenhum arquivo enviado")
+            st.warning("🌐 Informação não localizada nos arquivos.")
 
-            if pergunta:
-                st.write("Resposta:", pergunta)
+    else:
+        st.info("📁 Nenhum arquivo enviado")
+
+        if pergunta:
+            st.write("Resposta:", pergunta)
