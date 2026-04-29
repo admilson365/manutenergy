@@ -23,7 +23,7 @@ def salvar_usuarios(usuarios):
         # =========================
         # SESSION
         # =========================
-    if "logado" not in st.session_state:
+   if "logado" not in st.session_state:
         st.session_state.logado = False
 
 
@@ -33,21 +33,21 @@ def salvar_usuarios(usuarios):
         # =========================
         # LOGIN
         # =========================
-    if not st.session_state.logado:
+   if not st.session_state.logado:
 
         st.title("Login")
 
         usuario = st.text_input("Usuário")
         senha = st.text_input("Senha", type="password")
 
-    if st.button("Entrar"):
+   if st.button("Entrar"):
 
-    if usuario in usuarios and usuarios[usuario] == senha:
-        st.session_state.logado = True
-        st.session_state.usuario = usuario
-        st.rerun()
-else:
-        st.error("Usuário ou senha inválidos")
+       if usuario in usuarios and usuarios[usuario] == senha:
+            st.session_state.logado = True
+            st.session_state.usuario = usuario
+            st.rerun()
+        else:
+            st.error("Usuário ou senha inválidos")
 
 
     # =========================
@@ -84,8 +84,8 @@ else:
 
     if st.sidebar.button("Criar"):
 
-    if novo in usuarios:
-        st.sidebar.error("Usuário já existe")
+        if novo in usuarios:
+            st.sidebar.error("Usuário já existe")
 else:
         usuarios[novo] = hash_senha(senha_nova)
         salvar_usuarios(usuarios)
