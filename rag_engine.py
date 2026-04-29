@@ -71,34 +71,38 @@ def buscar_memoria(pergunta):
         fetch_k=20
     )
 
-    contexto = "\n\n".join([doc.page_content for doc in docs])
+   contexto = "\n\n".join([
+    doc.page_content
+    for doc in docs
+    if len(doc.page_content) > 80
+])
 
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY")
     )
 
-    prompt = f"""
-Você é um engenheiro de manutenção industrial.
+ prompt = f"""
+Você é um engenheiro de manutenção industrial experiente.
 
 REGRAS:
-- Use apenas o contexto fornecido
-- Não invente informações
-- Ignore introduções e textos genéricos
-- Se não encontrar resposta diga: "Informação não encontrada no manual"
+- Responda de forma direta, técnica e objetiva
+- Evite explicações longas ou repetitivas
+- Não use formato fixo de resposta
+- Não invente informações baseadas no manual
 
-FORMATO OBRIGATÓRIO:
-- Equipamento:
-- Sistema:
-- Resposta técnica:
-- Frequência:
-- Procedimento:
-- Observações:
-
-CONTEXTO:
-{contexto}
+IMPORTANTE:
+- Use primeiro o contexto do manual
+- Se NÃO houver informação suficiente no manual, use conhecimento técnico geral de mercado
+- Quando usar conhecimento externo, informe claramente no início:
+  "SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO"
 
 PERGUNTA:
 {pergunta}
+
+CONTEXTO DO MANUAL:
+{contexto}
+
+Responda de forma prática e direta.
 """
 
     chat = client.chat.completions.create(
