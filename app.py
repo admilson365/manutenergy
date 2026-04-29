@@ -2,20 +2,12 @@ import streamlit as st
 import json
 import os
 from hashlib import sha256
-from rag_engine import (
-    ler_pdf,
-    quebrar_texto,
-    salvar_memoria,
-    buscar_memoria
-)
-
-
+from rag_engine import (ler_pdf,quebrar_texto,salvar_memoria,buscar_memoria)
 # =========================
 # FUNÇÕES
 # =========================
 def hash_senha(senha):
     return sha256(senha.encode()).hexdigest()
-
 
 def carregar_usuarios():
     if os.path.exists("users.json"):
