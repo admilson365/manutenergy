@@ -3,12 +3,15 @@ import json
 import os
 from hashlib import sha256
 from PyPDF2 import PdfReader
+
 from rag_engine import (
     ler_pdf,
     quebrar_texto,
     salvar_memoria,
     buscar_memoria
 )
+
+
 # =========================
 # FUNÇÕES
 # =========================
