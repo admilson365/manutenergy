@@ -16,15 +16,15 @@ def ler_pdf(file):
     for page in reader.pages:
         texto = page.extract_text()
         if texto:
-            docs.append(Document(page_content=texto))
+           texto = " ".join(texto.split()) 
 
     return docs
 
 
 def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=400,
-        chunk_overlap=80
+    chunk_size=900,
+chunk_overlap=200    
     )
     return splitter.split_documents(docs)
 
@@ -64,10 +64,12 @@ def buscar_memoria(pergunta):
 
     if VECTORSTORE is None:
         return "Nenhum documento carregado."
-
-    docs = VECTORSTORE.max_marginal_relevance_search(
-        pergunta,
-        k=5,
+        
+docs = VECTORSTORE.similarity_search(
+    pergunta,
+    k=6
+)
+   
         fetch_k=20
     )
 
