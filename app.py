@@ -59,7 +59,6 @@ if not st.session_state.logado:
 # SISTEMA (DEPOIS DO LOGIN)
 # =========================
 else:
-else:
 
     st.title("🏭 ManutEnergy AI")
 
