@@ -21,14 +21,12 @@ def salvar_usuarios(users):
     with open(ARQUIVO_USERS, "w") as f:
         json.dump(users, f)
 
+from hashlib import sha256
 
 def hash_senha(senha):
     return sha256(senha.encode()).hexdigest()
 
 
-# =========================
-# SESSION
-# =========================
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
@@ -48,15 +46,15 @@ if not st.session_state.logado:
 
     if st.button("Entrar"):
 
-     if usuario in usuarios and usuarios[usuario] == senha:   
+        senha_hash = hash_senha(senha)
 
         if usuario in usuarios and usuarios[usuario] == senha_hash:
             st.session_state.logado = True
             st.session_state.usuario = usuario
             st.rerun()
+
         else:
             st.error("Usuário ou senha inválidos")
-
 
 # =========================
 # SISTEMA
