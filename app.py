@@ -81,17 +81,17 @@ else:
 
     st.title("🏭 ManutEnergy AI")
 
-    st.subheader("🤖 Assistente Técnico")
+   st.subheader("🤖 Assistente Técnico")
 
-    arquivos = st.file_uploader(
-        "Envie manuais PDF",
-        type=["pdf"],
-        accept_multiple_files=True
-    )
+arquivos = st.file_uploader(
+    "Envie manuais PDF",
+    type=["pdf"],
+    accept_multiple_files=True
+)
 
-    pergunta = st.text_input("Digite sua pergunta técnica")
+pergunta = st.text_input("Digite sua pergunta técnica")
 
-  if st.button("Consultar"):
+if st.button("Consultar"):
 
     if arquivos:
 
@@ -104,7 +104,7 @@ else:
                 if conteudo:
                     texto_total += conteudo + "\n"
 
-        if any(p in texto_total.lower() for p in pergunta.lower().split()):
+        if pergunta and any(p in texto_total.lower() for p in pergunta.lower().split()):
             st.success("📄 Informação encontrada nos arquivos internos.")
         else:
             st.warning("🌐 Informação não localizada nos arquivos.")
