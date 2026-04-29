@@ -91,7 +91,7 @@ else:
 
     pergunta = st.text_input("Digite sua pergunta técnica")
 
-   if st.button("Consultar"):
+  if st.button("Consultar"):
 
     texto_total = ""
 
