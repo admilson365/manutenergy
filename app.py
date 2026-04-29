@@ -77,12 +77,16 @@ else:
 
     if st.sidebar.button("Criar"):
 
-    usuarios = carregar_usuarios()
+     usuarios = carregar_usuarios()
 
-    if novo in usuarios:
-        st.sidebar.error("Usuário já existe")
+    senha_hash = hash_senha(senha)
+
+    if usuario in usuarios and usuarios[usuario] == senha_hash:
+        st.session_state.logado = True
+        st.session_state.usuario = usuario
+        st.rerun()
     else:
-        usuarios[novo] = hash_senha(senha_nova)
+        st.error("Usuário ou senha inválidos")
         salvar_usuarios(usuarios)
         st.sidebar.success("Usuário criado")
 
