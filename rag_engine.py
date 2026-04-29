@@ -96,7 +96,7 @@ def buscar_memoria(pergunta):
     )
 
     prompt = f"""
-Você é um engenheiro de manutenção industrial.
+Você é um especialista de manutenção industrial.
 
 Responda de forma direta e técnica.
 
@@ -116,4 +116,4 @@ CONTEXTO:
         model="llama-3.1-8b-instant"
     )
 
-   return f"--- CONTEXTO ENCONTRADO ---\n{contexto}\n\n--- RESPOSTA ---\n{chat.choices[0].message.content}" 
+    return f"--- CONTEXTO ENCONTRADO ---\n{contexto}\n\n--- RESPOSTA ---\n{chat.choices[0].message.content}"
