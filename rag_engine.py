@@ -99,19 +99,26 @@ def buscar_memoria(pergunta):
 Você é um especialista de manutenção industrial.
 
 OBJETIVO:
-Encontrar a resposta EXATA dentro do texto.
+Responder corretamente com base no tipo de pergunta.
 
 REGRAS:
-- NÃO explique demais
-- NÃO copie trechos grandes
-- NÃO invente
-- Se encontrar a informação, responda direto em 1 ou 2 linhas
-- Se não encontrar, diga:
-  "Informação não encontrada no manual"
 
-PROCESSO:
-1. Procure no texto valores, números, unidades
-2. Responda apenas o que foi perguntado
+1. Se a pergunta for sobre VALOR (pressão, temperatura, rpm, corrente, frequência, etc):
+- Responder direto com número + unidade
+- Máximo 1 linha
+- Ex: -5 mmCa a -10 mmCa
+
+2. Se a pergunta for sobre PROCEDIMENTO ou FUNCIONAMENTO:
+- Responder de forma técnica e objetiva
+- Máximo 5 linhas
+- Sem enrolação
+
+3. NÃO copiar texto bruto do manual
+4. NÃO inventar informação
+5. Se não encontrar no manual:
+Responder:
+"SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO"
+e dar a melhor resposta possível
 
 PERGUNTA:
 {pergunta}
@@ -119,7 +126,6 @@ PERGUNTA:
 TEXTO:
 {contexto}
 """
-
     chat = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model="llama-3.1-8b-instant"
