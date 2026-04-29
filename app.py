@@ -123,7 +123,7 @@ if trechos:
     for t in trechos:
         st.write(t)
         else:
-            st.info("📁 Nenhum arquivo enviado")
+          st.warning("Nenhum trecho encontrado no documento.")  
 
             if pergunta:
                 st.write("Resposta:", pergunta)
