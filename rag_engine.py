@@ -69,32 +69,26 @@ def buscar_memoria(pergunta):
 
     pergunta = pergunta.lower().strip()
 
-    reforco = f"""
-    {pergunta}
-
-    manutenção ajuste regulagem tensionamento corrente sistema mecânico transporte
-    """
-
+    # busca ampla inicial
     docs = VECTORSTORE.similarity_search(pergunta, k=15)
 
-    # filtro por palavra-chave (FORTE)
+    # filtro por palavra-chave (busca híbrida)
     palavras = pergunta.split()
-
     docs_filtrados = []
 
-for doc in docs:
-    texto = doc.page_content.lower()
-    if any(p in texto for p in palavras):
-        docs_filtrados.append(doc)
+    for doc in docs:
+        texto = doc.page_content.lower()
+        if any(p in texto for p in palavras):
+            docs_filtrados.append(doc)
 
-    # fallback se não encontrar nada
-if not docs_filtrados:
-    docs_filtrados = docs[:5]
+    # fallback se não encontrar nada relevante
+    if not docs_filtrados:
+        docs_filtrados = docs[:5]
 
+    # monta contexto
     contexto = "\n\n".join([
         doc.page_content
-        for doc in docs
-        if len(doc.page_content) > 80
+        for doc in docs_filtrados[:5]
     ])
 
     client = Groq(
@@ -104,10 +98,10 @@ if not docs_filtrados:
     prompt = f"""
 Você é um engenheiro de manutenção industrial.
 
-Responda direto e técnico.
+Responda de forma direta e técnica.
 
-Use o manual primeiro.
-Se não encontrar, use conhecimento de mercado e avise no início:
+Use o contexto do manual.
+Se não houver informação suficiente, use conhecimento de mercado e informe no início:
 SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO
 
 PERGUNTA:
