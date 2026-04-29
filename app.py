@@ -67,8 +67,11 @@ else:
     pergunta = st.text_input("Pergunta técnica")
 
     if st.button("Consultar"):
-        resposta = buscar_memoria(pergunta)
-        st.write(resposta)
+
+    resposta = buscar_memoria(pergunta)
+
+    st.write("📌 Resposta:")
+    st.write(resposta)
 
 
     # =========================
