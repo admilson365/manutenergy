@@ -15,7 +15,6 @@ def ler_pdf(file):
 
     for page in reader.pages:
         texto = page.extract_text()
-
         if texto:
             docs.append(Document(page_content=texto))
 
@@ -30,12 +29,6 @@ def quebrar_texto(docs):
     return splitter.split_documents(docs)
 
 
-def salvar_memoria(chunks):
-    global VECTORSTORE
-
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
 def filtrar_chunks(chunks):
     palavras_ruins = [
         "introdução",
@@ -49,13 +42,21 @@ def filtrar_chunks(chunks):
 
     for c in chunks:
         texto = c.page_content.lower()
-
         if not any(p in texto for p in palavras_ruins):
             filtrados.append(c)
 
     return filtrados
-chunks = filtrar_chunks(chunks)
-VECTORSTORE = FAISS.from_documents(chunks, embeddings)
+
+
+def salvar_memoria(chunks):
+    global VECTORSTORE
+
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+
+    chunks = filtrar_chunks(chunks)
+    VECTORSTORE = FAISS.from_documents(chunks, embeddings)
 
 
 def buscar_memoria(pergunta):
@@ -64,11 +65,11 @@ def buscar_memoria(pergunta):
     if VECTORSTORE is None:
         return "Nenhum documento carregado."
 
-   docs = VECTORSTORE.max_marginal_relevance_search(
-    pergunta,
-    k=5,
-    fetch_k=20
-)
+    docs = VECTORSTORE.max_marginal_relevance_search(
+        pergunta,
+        k=5,
+        fetch_k=20
+    )
 
     contexto = "\n\n".join([doc.page_content for doc in docs])
 
@@ -76,7 +77,7 @@ def buscar_memoria(pergunta):
         api_key=os.environ.get("GROQ_API_KEY")
     )
 
-   prompt = f"""
+    prompt = f"""
 Você é um engenheiro de manutenção industrial.
 
 REGRAS:
@@ -100,18 +101,9 @@ PERGUNTA:
 {pergunta}
 """
 
-
-CONTEXTO EXTRAÍDO DOS MANUAIS:
-{contexto}
-
-Responda resumindo e explicando claramente.
-"""
-
     chat = client.chat.completions.create(
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-      model="llama-3.1-8b-instant"  
+        messages=[{"role": "user", "content": prompt}],
+        model="llama-3.1-8b-instant"
     )
 
     return chat.choices[0].message.content
