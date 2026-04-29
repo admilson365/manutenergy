@@ -68,13 +68,25 @@ def buscar_memoria(pergunta):
         return "Nenhum documento carregado."
 
     pergunta = pergunta.lower().strip()
+# reforço técnico de busca
+reforco = f"""
+{pergunta}
 
-    docs = VECTORSTORE.similarity_search(
-        pergunta,
-        k=6
-    )
+contexto técnico:
+- manutenção
+- ajuste
+- regulagem
+- tensionamento
+- corrente
+- sistema mecânico
+- transporte de material
+"""
+   docs = VECTORSTORE.similarity_search(
+    reforco,
+    k=10
+)
 
-    contexto = "\n\n".join([
+ contexto = "\n\n".join([
         doc.page_content
         for doc in docs
         if len(doc.page_content) > 80
