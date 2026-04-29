@@ -90,6 +90,5 @@ else:
             usuarios[novo] = hash_senha(senha_nova)
             salvar_usuarios(usuarios)
             st.sidebar.success("Usuário criado")
-usuarios["admin"] = hash_senha("1234")
-salvar_usuarios(usuarios)
+
 st.success("admin resetado")
