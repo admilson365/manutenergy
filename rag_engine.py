@@ -36,8 +36,26 @@ def salvar_memoria(chunks):
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
+def filtrar_chunks(chunks):
+    palavras_ruins = [
+        "introdução",
+        "sumário",
+        "agradecimento",
+        "manual de operação",
+        "anúncio"
+    ]
 
-    VECTORSTORE = FAISS.from_documents(chunks, embeddings)
+    filtrados = []
+
+    for c in chunks:
+        texto = c.page_content.lower()
+
+        if not any(p in texto for p in palavras_ruins):
+            filtrados.append(c)
+
+    return filtrados
+chunks = filtrar_chunks(chunks)
+VECTORSTORE = FAISS.from_documents(chunks, embeddings)
 
 
 def buscar_memoria(pergunta):
@@ -46,7 +64,11 @@ def buscar_memoria(pergunta):
     if VECTORSTORE is None:
         return "Nenhum documento carregado."
 
-    docs = VECTORSTORE.similarity_search(pergunta, k=3)
+   docs = VECTORSTORE.max_marginal_relevance_search(
+    pergunta,
+    k=5,
+    fetch_k=20
+)
 
     contexto = "\n\n".join([doc.page_content for doc in docs])
 
@@ -54,13 +76,30 @@ def buscar_memoria(pergunta):
         api_key=os.environ.get("GROQ_API_KEY")
     )
 
-    prompt = f"""
-Você é um especialista em manutenção industrial.
+   prompt = f"""
+Você é um engenheiro de manutenção industrial.
 
-Responda de forma objetiva e técnica.
+REGRAS:
+- Use apenas o contexto fornecido
+- Não invente informações
+- Ignore introduções e textos genéricos
+- Se não encontrar resposta diga: "Informação não encontrada no manual"
+
+FORMATO OBRIGATÓRIO:
+- Equipamento:
+- Sistema:
+- Resposta técnica:
+- Frequência:
+- Procedimento:
+- Observações:
+
+CONTEXTO:
+{contexto}
 
 PERGUNTA:
 {pergunta}
+"""
+
 
 CONTEXTO EXTRAÍDO DOS MANUAIS:
 {contexto}
