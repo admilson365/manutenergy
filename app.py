@@ -23,11 +23,11 @@ def salvar_usuarios(usuarios):
         # =========================
         # SESSION
         # =========================
-   if "logado" not in st.session_state:
-        st.session_state.logado = False
+       if "logado" not in st.session_state:
+            st.session_state.logado = False
 
 
-            usuarios = carregar_usuarios()
+                usuarios = carregar_usuarios()
 
 
         # =========================
