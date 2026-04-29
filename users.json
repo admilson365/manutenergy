@@ -1,3 +1,5 @@
 {
-  "admin": "HASH_DA_SENHA"
+  "admin": "1234",
+  "tecnico1": "1111",
+  "supervisor": "2222"
 }
