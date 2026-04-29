@@ -47,6 +47,7 @@ if not st.session_state.logado:
 # ======================
 # SISTEMA
 # ======================
+
 else:
 
     st.sidebar.success(f"Logado: {st.session_state.usuario}")
@@ -55,15 +56,13 @@ else:
         st.session_state.logado = False
         st.rerun()
 
-    st.title("🏭 ManutEnergy AI")
+    # =========================
+    # CADASTRO
+    # =========================
+    st.sidebar.subheader("👤 Criar usuário")
 
-    st.info("Sistema funcionando")
-
-    # cadastro simples
-    st.sidebar.subheader("Criar usuário")
-
-    novo = st.sidebar.text_input("Novo usuário")
-    senha_nova = st.sidebar.text_input("Senha", type="password")
+    novo = st.sidebar.text_input("Usuário novo")
+    senha_nova = st.sidebar.text_input("Senha nova", type="password")
 
     if st.sidebar.button("Criar"):
 
@@ -72,6 +71,42 @@ else:
         if novo in usuarios:
             st.sidebar.error("Usuário já existe")
         else:
-            usuarios[novo] = senha_nova
+            usuarios[novo] = hash_senha(senha_nova)
             salvar_usuarios(usuarios)
-            st.sidebar.success("Criado com sucesso")
+            st.sidebar.success("Usuário criado")
+
+    # =========================
+    # IA + UPLOAD
+    # =========================
+
+    st.title("🏭 ManutEnergy AI")
+
+    st.subheader("🤖 Assistente Técnico")
+
+    arquivos = st.file_uploader(
+        "Envie manuais PDF",
+        type=["pdf"],
+        accept_multiple_files=True
+    )
+
+    pergunta = st.text_input("Digite sua pergunta técnica")
+
+    if st.button("Consultar"):
+
+        if arquivos:
+
+            texto_total = ""
+
+            for arquivo in arquivos:
+                texto_total += str(arquivo.read())
+
+            if pergunta.lower() in texto_total.lower():
+                st.success("📄 Informação encontrada nos arquivos internos.")
+            else:
+                st.warning("🌐 Informação não localizada nos arquivos.")
+
+        else:
+            st.info("📁 Nenhum arquivo enviado")
+
+            if pergunta:
+                st.write("Resposta:", pergunta)
