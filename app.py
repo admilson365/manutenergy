@@ -106,29 +106,11 @@ else:
 
            if trechos:
     st.write("📌 Trechos encontrados:")
+
     for t in trechos:
         st.write(t)
+
 else:
     st.warning("Nenhum trecho encontrado no documento.")
-               
-            else:
-                st.warning("🌐 Informação não localizada nos arquivos.")
-st.success("📄 Informação encontrada nos arquivos internos.")
 
-trechos = []
-
-for palavra in pergunta.lower().split():
-    if palavra in texto_total.lower():
-        idx = texto_total.lower().find(palavra)
-        trecho = texto_total[max(0, idx-100):idx+200]
-        trechos.append(trecho)
-
-if trechos:
-    st.write("📌 Trechos encontrados:")
-    for t in trechos:
-        st.write(t)
-        else:
-          st.warning("Nenhum trecho encontrado no documento.")  
-
-            if pergunta:
-                st.write("Resposta:", pergunta)
+# fim da consulta
