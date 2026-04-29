@@ -77,14 +77,14 @@ else:
 
     if st.sidebar.button("Criar"):
 
-        usuarios = carregar_usuarios()
+    usuarios = carregar_usuarios()
 
-        if novo in usuarios:
-            st.sidebar.error("Usuário já existe")
-        else:
-            usuarios[novo] = hash_senha(senha_nova)
-            salvar_usuarios(usuarios)
-            st.sidebar.success("Usuário criado")
+    if novo in usuarios:
+        st.sidebar.error("Usuário já existe")
+    else:
+        usuarios[novo] = hash_senha(senha_nova)
+        salvar_usuarios(usuarios)
+        st.sidebar.success("Usuário criado")
 
     # -------------------------
     # IA
