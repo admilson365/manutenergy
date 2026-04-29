@@ -67,27 +67,20 @@ def buscar_memoria(pergunta):
     if VECTORSTORE is None:
         return "Nenhum documento carregado."
 
-pergunta = pergunta.lower().strip()
+    pergunta = pergunta.lower().strip()
 
-    # reforço técnico de busca
     reforco = f"""
     {pergunta}
 
-contexto técnico:
-- manutenção
-- ajuste
-- regulagem
-- tensionamento
-- corrente
-- sistema mecânico
-- transporte de material
-"""
-   docs = VECTORSTORE.similarity_search(
-    reforco,
-    k=10
-)
+    manutenção ajuste regulagem tensionamento corrente sistema mecânico transporte
+    """
 
- contexto = "\n\n".join([
+    docs = VECTORSTORE.similarity_search(
+        reforco,
+        k=8
+    )
+
+    contexto = "\n\n".join([
         doc.page_content
         for doc in docs
         if len(doc.page_content) > 80
@@ -98,15 +91,13 @@ contexto técnico:
     )
 
     prompt = f"""
-Você é um engenheiro de manutenção industrial experiente.
+Você é um engenheiro de manutenção industrial.
 
-REGRAS:
-- Responda de forma direta e técnica
-- Sem explicação longa
-- Use o manual primeiro
-- Se não encontrar, use conhecimento de mercado
-- Se usar mercado, comece com:
-  "SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO"
+Responda direto e técnico.
+
+Use o manual primeiro.
+Se não encontrar, use conhecimento de mercado e avise no início:
+SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO
 
 PERGUNTA:
 {pergunta}
