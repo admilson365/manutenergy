@@ -98,16 +98,25 @@ def buscar_memoria(pergunta):
     prompt = f"""
 Você é um especialista de manutenção industrial.
 
-Responda de forma direta e técnica.
+OBJETIVO:
+Encontrar a resposta EXATA dentro do texto.
 
-Use o contexto do manual.
-Se não houver informação suficiente, use conhecimento de mercado e informe no início:
-SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO
+REGRAS:
+- NÃO explique demais
+- NÃO copie trechos grandes
+- NÃO invente
+- Se encontrar a informação, responda direto em 1 ou 2 linhas
+- Se não encontrar, diga:
+  "Informação não encontrada no manual"
+
+PROCESSO:
+1. Procure no texto valores, números, unidades
+2. Responda apenas o que foi perguntado
 
 PERGUNTA:
 {pergunta}
 
-CONTEXTO:
+TEXTO:
 {contexto}
 """
 
