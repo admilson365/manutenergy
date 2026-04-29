@@ -35,29 +35,39 @@ else:
         st.session_state.logado = False
         st.rerun()
 
-    # -------------------------
-    # CADASTRO
-    # -------------------------
-    st.sidebar.subheader("👤 Criar usuário")
+# -------------------------
+# CADASTRO
+# -------------------------
+st.sidebar.subheader("👤 Criar usuário")
 
-    novo = st.sidebar.text_input("Usuário novo")
-    senha_nova = st.sidebar.text_input("Senha nova", type="password")
+novo = st.sidebar.text_input("Usuário novo")
+senha_nova = st.sidebar.text_input("Senha nova", type="password")
 
-    if st.sidebar.button("Criar"):
+if st.sidebar.button("Criar"):
 
-     usuarios = carregar_usuarios()
+    usuarios = carregar_usuarios()
 
-    senha_hash = hash_senha(senha)
-
-    if usuario in usuarios and usuarios[usuario] == senha_hash:
-        st.session_state.logado = True
-        st.session_state.usuario = usuario
-        st.rerun()
+    if novo in usuarios:
+        st.sidebar.error("Usuário já existe")
     else:
-        st.error("Usuário ou senha inválidos")
+        usuarios[novo] = hash_senha(senha_nova)
         salvar_usuarios(usuarios)
         st.sidebar.success("Usuário criado")
 
+
+# -------------------------
+# LOGIN (CORRETO)
+# -------------------------
+usuarios = carregar_usuarios()
+
+senha_hash = hash_senha(senha)
+
+if usuario in usuarios and usuarios[usuario] == senha_hash:
+    st.session_state.logado = True
+    st.session_state.usuario = usuario
+    st.rerun()
+else:
+    st.error("Usuário ou senha inválidos")
     # -------------------------
     # IA
     # -------------------------
