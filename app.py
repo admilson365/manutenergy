@@ -48,7 +48,7 @@ if not st.session_state.logado:
 
     if st.button("Entrar"):
 
-        senha_hash = hash_senha(senha)
+     if usuario in usuarios and usuarios[usuario] == senha:   
 
         if usuario in usuarios and usuarios[usuario] == senha_hash:
             st.session_state.logado = True
