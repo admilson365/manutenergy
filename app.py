@@ -51,16 +51,25 @@ else:
 
     st.title("🏭 ManutEnergy AI")
 
-    uploaded_files = st.file_uploader(
-        "Envie arquivos",
-        type=["pdf", "txt", "docx", "pptx"],
-        accept_multiple_files=True
-    )
+uploaded_files = st.file_uploader(
+    "Envie arquivos",
+    type=["pdf", "txt", "docx", "pptx"],
+    accept_multiple_files=True
+)
 
-    if arquivo:
-        docs = ler_pdf(arquivo)
+if uploaded_files:
+
+    todos_chunks = []
+
+    for file in uploaded_files:
+
+        docs = ler_arquivo(file)   # <-- AQUI é a função nova
         chunks = quebrar_texto(docs)
-        salvar_memoria(chunks)
+
+        todos_chunks.extend(chunks)
+
+    salvar_memoria(todos_chunks)
+    st.success("Arquivos carregados com sucesso!")
 
     pergunta = st.text_input("Pergunta técnica")
 
