@@ -51,7 +51,11 @@ else:
 
     st.title("🏭 ManutEnergy AI")
 
-    arquivo = st.file_uploader("Envie PDF", type=["pdf"])
+    uploaded_files = st.file_uploader(
+        "Envie arquivos",
+        type=["pdf", "txt", "docx", "pptx"],
+        accept_multiple_files=True
+    )
 
     if arquivo:
         docs = ler_pdf(arquivo)
