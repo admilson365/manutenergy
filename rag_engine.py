@@ -82,7 +82,7 @@ def buscar_memoria(pergunta):
 
     for doc in docs:
         texto = doc.page_content.lower()
-        if all(p in texto for p in palavras):
+        if any(p in texto for p in palavras):
             docs_filtrados.append(doc)
 
     # fallback se não encontrar nada relevante
