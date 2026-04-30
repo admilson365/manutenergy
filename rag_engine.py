@@ -79,11 +79,7 @@ def buscar_memoria(pergunta):
 
     # busca inicial
     docs = VECTORSTORE.similarity_search(pergunta, k=20)
-        pergunta,
-        k=8,
-        fetch_k=30
-    )
-
+     
     # rerank por relevância real
     def score(doc):
         texto = doc.page_content.lower()
@@ -151,4 +147,4 @@ TEXTO:
 
     resposta = chat.choices[0].message.content
 
-    return resposta.split("\n")[0]
+    return resposta
