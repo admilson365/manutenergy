@@ -60,7 +60,6 @@ def salvar_memoria(chunks):
     chunks = filtrar_chunks(chunks)
     VECTORSTORE = FAISS.from_documents(chunks, embeddings)
 
-
 def buscar_memoria(pergunta):
     global VECTORSTORE
 
@@ -70,19 +69,28 @@ def buscar_memoria(pergunta):
     pergunta = pergunta.lower().strip()
 
     # busca ampla inicial
-    docs = VECTORSTORE.max_marginal_relevance_search(
-        pergunta,
-        k=8,
-        fetch_k=30
-    )
-
-    # filtro por palavra-chave (busca híbrida)
+    # palavras importantes da pergunta
     stopwords = ["qual", "quais", "o", "a", "os", "as", "de", "da", "do", "das", "dos", "é", "em", "para", "com"]
 
     palavras = [
         p for p in pergunta.split()
         if p not in stopwords and len(p) > 2
     ]
+
+    # busca inicial
+    docs = VECTORSTORE.max_marginal_relevance_search(
+        pergunta,
+        k=8,
+        fetch_k=30
+    )
+
+    # rerank por relevância real
+    def score(doc):
+        texto = doc.page_content.lower()
+        return sum(1 for p in palavras if p in texto)
+
+    docs = sorted(docs, key=score, reverse=True)
+
     docs_filtrados = []
 
     for doc in docs:
@@ -135,6 +143,7 @@ PERGUNTA:
 TEXTO:
 {contexto}
 """
+
     chat = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model="llama-3.1-8b-instant"
@@ -142,4 +151,4 @@ TEXTO:
 
     resposta = chat.choices[0].message.content
 
-    return resposta.split("\n")[0]    
+    return resposta.split("\n")[0]
