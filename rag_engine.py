@@ -77,7 +77,12 @@ def buscar_memoria(pergunta):
     )
 
     # filtro por palavra-chave (busca híbrida)
-    palavras = pergunta.split()
+    stopwords = ["qual", "quais", "o", "a", "os", "as", "de", "da", "do", "das", "dos", "é", "em", "para", "com"]
+
+    palavras = [
+        p for p in pergunta.split()
+        if p not in stopwords and len(p) > 2
+    ]
     docs_filtrados = []
 
     for doc in docs:
