@@ -9,10 +9,45 @@ from pptx import Presentation
 VECTORSTORE = None
 
 
-def ler_pdf(file):
-    reader = PdfReader(file)
+def ler_arquivo(file):
     docs = []
 
+    # PDF
+    if file.type == "application/pdf":
+        reader = PdfReader(file)
+
+        for page in reader.pages:
+            texto = page.extract_text()
+            if texto:
+                texto = " ".join(texto.split())
+                docs.append(Document(page_content=texto))
+
+    # TXT
+    elif file.type == "text/plain":
+        texto = str(file.read(), "utf-8")
+        docs.append(Document(page_content=texto))
+
+    # DOCX
+    elif file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        doc = DocxDocument(file)
+
+        texto = "\n".join([p.text for p in doc.paragraphs if p.text.strip()])
+        docs.append(Document(page_content=texto))
+
+    # PPTX
+    elif file.type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        prs = Presentation(file)
+
+        texto_total = ""
+
+        for slide in prs.slides:
+            for shape in slide.shapes:
+                if hasattr(shape, "text") and shape.text:
+                    texto_total += shape.text + "\n"
+
+        docs.append(Document(page_content=texto_total))
+
+    return docs
     for page in reader.pages:
         texto = page.extract_text()
 
