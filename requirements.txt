@@ -10,3 +10,4 @@ langchain-text-splitters
 groq
 streamlit-authenticator
 PyPDF2
+python-pptx
