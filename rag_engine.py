@@ -7,8 +7,17 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from pptx import Presentation
 VECTORSTORE = None
+DB_PATH = "vectorstore"
 
+def carregar_memoria():
+    global VECTORSTORE
 
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+
+    if os.path.exists(DB_PATH):
+        VECTORSTORE = FAISS.load_local(DB_PATH, embeddings)
 def ler_arquivo(file):
     docs = []
 
