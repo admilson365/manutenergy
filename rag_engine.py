@@ -78,7 +78,7 @@ def buscar_memoria(pergunta):
     ]
 
     # busca inicial
-    docs = VECTORSTORE.max_marginal_relevance_search(
+    docs = VECTORSTORE.similarity_search(pergunta, k=20)
         pergunta,
         k=8,
         fetch_k=30
@@ -105,7 +105,7 @@ def buscar_memoria(pergunta):
     # monta contexto
     contexto = "\n\n".join([
         doc.page_content
-        for doc in docs_filtrados[:5]
+        for doc in docs_filtrados[:3]
     ])
 
     client = Groq(
