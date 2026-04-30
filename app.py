@@ -2,7 +2,9 @@ import streamlit as st
 import json
 import os
 from rag_engine import ler_arquivo, quebrar_texto, salvar_memoria, buscar_memoria
+from rag_engine import carregar_memoria
 
+carregar_memoria()
 
 # =========================
 # FUNÇÕES
