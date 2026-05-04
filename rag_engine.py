@@ -135,8 +135,8 @@ for doc in docs:
     if any(p in texto for p in palavras):
         docs_filtrados.append(doc)
 
-if docs_filtrados:
-    docs = docs_filtrados
+    if docs_filtrados:
+        docs = docs_filtrados
     
 
     # fallback se não encontrar nada relevante
