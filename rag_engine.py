@@ -69,8 +69,8 @@ def ler_arquivo(file):
 
 def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=900,
-        chunk_overlap=200
+        chunk_size=700,
+        chunk_overlap=150
     )
     return splitter.split_documents(docs)
 
@@ -122,12 +122,12 @@ def buscar_memoria(pergunta):
     ]
 
     # busca inicial
-    docs = VECTORSTORE.similarity_search(pergunta, k=20)
+    docs = VECTORSTORE.similarity_search(pergunta, k=10)
      
     # rerank por relevância real
     def score(doc):
         texto = doc.page_content.lower()
-        return sum(1 for p in palavras if p in texto)
+        return sum(texto.count(p) for p in palavras)
 
     docs = sorted(docs, key=score, reverse=True)
 
