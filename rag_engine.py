@@ -123,21 +123,21 @@ def buscar_memoria(pergunta):
     ]
 
     # busca inicial
-    docs = VECTORSTORE.similarity_search(pergunta, k=10)
+    docs = VECTORSTORE.similarity_search(pergunta, k=20)
      
-    # rerank por relevância real
-    def score(doc):
-        texto = doc.page_content.lower()
-        return sum(texto.count(p) for p in palavras)
-
-    docs = sorted(docs, key=score, reverse=True)
+    palavras = pergunta.lower().split()
 
     docs_filtrados = []
 
-    for doc in docs:
-        texto = doc.page_content.lower()
-        if any(p in texto for p in palavras):
-            docs_filtrados.append(doc)
+for doc in docs:
+    texto = doc.page_content.lower()
+
+    if any(p in texto for p in palavras):
+        docs_filtrados.append(doc)
+
+if docs_filtrados:
+    docs = docs_filtrados
+    
 
     # fallback se não encontrar nada relevante
     if not docs_filtrados:
