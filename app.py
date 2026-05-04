@@ -27,24 +27,26 @@ if "logado" not in st.session_state:
 
 usuarios = carregar_usuarios()
 
-# =========================
-# LOGIN
-# =========================
+# controle de login
+if "logado" not in st.session_state:
+    st.session_state.logado = False
+
+# tela de login
 if not st.session_state.logado:
 
-    st.title("Login")
+    st.title("🔐 Login - ManutEnergy AI")
 
     usuario = st.text_input("Usuário")
     senha = st.text_input("Senha", type="password")
 
     if st.button("Entrar"):
-
-        if usuario in usuarios and usuarios[usuario] == senha:
+        if usuario == "admin" and senha == "123":
             st.session_state.logado = True
-            st.session_state.usuario = usuario
             st.rerun()
         else:
             st.error("Usuário ou senha inválidos")
+
+    st.stop()
 
 # =========================
 # SISTEMA (IA)
