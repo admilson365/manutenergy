@@ -61,7 +61,8 @@ def ler_arquivo(file):
         texto = page.extract_text()
 
         if texto:
-            texto = " ".join(texto.split())
+            import re
+            texto = re.sub(r'\s+', ' ', texto) 
             docs.append(Document(page_content=texto))
 
     return docs
@@ -69,8 +70,8 @@ def ler_arquivo(file):
 
 def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=900,
-        chunk_overlap=200
+        chunk_size=1200,
+        chunk_overlap=300
     )
     return splitter.split_documents(docs)
 
@@ -140,14 +141,14 @@ def buscar_memoria(pergunta):
 
     # fallback se não encontrar nada relevante
     if not docs_filtrados:
-        docs_filtrados = docs[:5]
+        docs_filtrados = docs[:8]
 
     # monta contexto
     contexto = "\n\n".join([
         doc.page_content
         for doc in docs_filtrados[:3]
     ])
-
+    print(contexto)
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY")
     )
