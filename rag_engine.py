@@ -70,8 +70,8 @@ def ler_arquivo(file):
 
 def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1200,
-        chunk_overlap=300
+        chunk_size=900,
+        chunk_overlap=200
     )
     return splitter.split_documents(docs)
 
