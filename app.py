@@ -40,7 +40,8 @@ if not st.session_state.logado:
     senha = st.text_input("Senha", type="password")
 
     if st.button("Entrar"):
-        print("DEBUG:", usuario, senha)
+        st.session_state.logado = True
+        st.rerun()
 
         if usuario.strip().lower() == "admin" and senha.strip() == "123":
             st.session_state.logado = True
