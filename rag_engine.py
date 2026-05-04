@@ -113,8 +113,6 @@ def buscar_memoria(pergunta):
 
     pergunta = pergunta.lower().strip()
 
-    # busca ampla inicial
-    # palavras importantes da pergunta
     stopwords = ["qual", "quais", "o", "a", "os", "as", "de", "da", "do", "das", "dos", "é", "em", "para", "com"]
 
     palavras = [
@@ -124,31 +122,31 @@ def buscar_memoria(pergunta):
 
     # busca inicial
     docs = VECTORSTORE.similarity_search(pergunta, k=20)
-     
-    palavras = pergunta.lower().split()
 
+    # filtro simples
     docs_filtrados = []
 
-for doc in docs:
-    texto = doc.page_content.lower()
+    for doc in docs:
+        texto = doc.page_content.lower()
 
-    if any(p in texto for p in palavras):
-        docs_filtrados.append(doc)
+        if any(p in texto for p in palavras):
+            docs_filtrados.append(doc)
 
+    # usa filtrado se tiver resultado
     if docs_filtrados:
         docs = docs_filtrados
-    
 
-    # fallback se não encontrar nada relevante
-    if not docs_filtrados:
-        docs_filtrados = docs[:8]
+    # fallback
+    docs = docs[:8]
 
     # monta contexto
     contexto = "\n\n".join([
         doc.page_content
-        for doc in docs_filtrados[:3]
+        for doc in docs[:5]
     ])
+
     print(contexto)
+
     client = Groq(
         api_key=os.environ.get("GROQ_API_KEY")
     )
@@ -156,27 +154,15 @@ for doc in docs:
     prompt = f"""
 Você é um especialista de manutenção industrial.
 
-OBJETIVO:
-Responder corretamente com base no tipo de pergunta.
+Responda apenas com base no TEXTO abaixo.
 
-REGRAS:
+Se a resposta estiver no TEXTO:
+- Responda direto
+- NÃO diga que é sugestão
 
-1. Se a pergunta for sobre VALOR (pressão, temperatura, rpm, corrente, frequência, etc):
-- Responder direto com número + unidade
-- Máximo 1 linha
-- Ex: -5 mmCa a -10 mmCa
-
-2. Se a pergunta for sobre PROCEDIMENTO ou FUNCIONAMENTO:
-- Responder de forma técnica e objetiva
-- Máximo 5 linhas
-- Sem enrolação
-
-3. NÃO copiar texto bruto do manual
-4. NÃO inventar informação
-5. Se não encontrar no manual:
-Responder:
+Se NÃO estiver:
+- Comece com:
 "SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO"
-e dar a melhor resposta possível
 
 PERGUNTA:
 {pergunta}
