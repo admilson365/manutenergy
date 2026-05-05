@@ -137,7 +137,7 @@ def buscar_memoria(pergunta):
         docs = docs_filtrados
 
     # fallback
-    docs = docs[:8]
+    docs = docs[:10]
 
     # monta contexto
     contexto = "\n\n".join([
@@ -151,17 +151,19 @@ def buscar_memoria(pergunta):
         api_key=os.environ.get("GROQ_API_KEY")
     )
 
-    prompt = f"""
-Você é um especialista de manutenção industrial.
+   prompt = f"""
+Você é um especialista em manutenção industrial.
 
-Responda apenas com base no TEXTO abaixo.
+INSTRUÇÕES:
 
-Se a resposta estiver no TEXTO:
-- Responda direto
-- NÃO diga que é sugestão
+- Use APENAS o TEXTO fornecido
+- Responda de forma técnica, completa e clara
+- Traga TODAS as informações relevantes encontradas
+- NÃO limite o tamanho da resposta
+- NÃO invente informações
 
-Se NÃO estiver:
-- Comece com:
+Se a resposta NÃO estiver no texto:
+inicie com:
 "SUGESTÃO BASEADA EM CONHECIMENTO TÉCNICO DE MERCADO"
 
 PERGUNTA:
@@ -169,7 +171,7 @@ PERGUNTA:
 
 TEXTO:
 {contexto}
-"""
+""" 
 
     chat = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
