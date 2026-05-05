@@ -6,6 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from pptx import Presentation
+from docx import Document as DocxDocument
 VECTORSTORE = None
 DB_PATH = "vectorstore"
 
@@ -57,16 +58,7 @@ def ler_arquivo(file):
         docs.append(Document(page_content=texto_total))
 
     return docs
-    for page in reader.pages:
-        texto = page.extract_text()
-
-        if texto:
-            import re
-            texto = re.sub(r'\s+', ' ', texto) 
-            docs.append(Document(page_content=texto))
-
-    return docs
-
+    
 
 def quebrar_texto(docs):
     splitter = RecursiveCharacterTextSplitter(
@@ -151,7 +143,7 @@ def buscar_memoria(pergunta):
         api_key=os.environ.get("GROQ_API_KEY")
     )
 
-   prompt = f"""
+    prompt = f"""
 Você é um especialista em manutenção industrial.
 
 INSTRUÇÕES:
