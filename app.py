@@ -1,7 +1,7 @@
 import streamlit as st
 import json
 import os
-from rag_engine import ler_arquivo, quebrar_texto, salvar_memoria, buscar_memoria
+from rag_engine import ler_arquivo, quebrar_texto, salvar_memoria, buscar_memoria, carregar_memoria
 from rag_engine import carregar_memoria
 
 carregar_memoria()
@@ -27,10 +27,6 @@ if "logado" not in st.session_state:
 
 usuarios = carregar_usuarios()
 
-# controle de login
-if "logado" not in st.session_state:
-    st.session_state.logado = False
-
 # tela de login
 if not st.session_state.logado:
 
@@ -40,22 +36,22 @@ if not st.session_state.logado:
     senha = st.text_input("Senha", type="password")
 
     if st.button("Entrar"):
-        st.session_state.logado = True
-        st.rerun()
 
         if usuario.strip().lower() == "admin" and senha.strip() == "123":
             st.session_state.logado = True
+            st.rerun()
         else:
             st.error("Usuário ou senha inválidos")
-
     st.stop()
+# =========================
+# CARREGA MEMÓRIA
+# =========================
+carregar_memoria()   
 
 # =========================
 # SISTEMA (IA)
 # =========================
-else:
-
-    st.title("🏭 ManutEnergy AI")
+st.title("🏭 ManutEnergy AI")
 
 uploaded_files = st.file_uploader(
     "Envie arquivos",
