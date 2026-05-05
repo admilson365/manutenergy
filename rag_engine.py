@@ -137,12 +137,12 @@ def buscar_memoria(pergunta):
         docs = docs_filtrados
 
     # fallback
-    docs = docs[:10]
+    docs = docs[:8]
 
     # monta contexto
     contexto = "\n\n".join([
         doc.page_content
-        for doc in docs[:5]
+        for doc in docs[:10]
     ])
 
     print(contexto)
