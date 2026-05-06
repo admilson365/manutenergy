@@ -95,7 +95,10 @@ def salvar_memoria(chunks):
     )
 
     chunks = filtrar_chunks(chunks)
-    VECTORSTORE = FAISS.from_documents(chunks, embeddings)
+    if VECTORSTORE is not None:
+        VECTORSTORE.add_documents(chunks)
+    else:
+        VECTORSTORE = FAISS.from_documents(chunks, embeddings)
     
     VECTORSTORE.save_local(DB_PATH)
     
