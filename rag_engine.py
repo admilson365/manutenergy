@@ -128,7 +128,7 @@ def buscar_memoria(pergunta):
 
         score = sum(1 for p in palavras if p in texto)
 
-        if score > 0:
+        if score > 2 and palavra_principal in texto:
             docs_com_score.append((doc, score))
 
     
