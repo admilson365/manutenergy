@@ -60,26 +60,21 @@ uploaded_files = st.file_uploader(
 )
 
 if uploaded_files:
-
-    todos_chunks = []
-
     for file in uploaded_files:
-
-        docs = ler_arquivo(file)   # <-- AQUI é a função nova
+        docs = ler_arquivo(file)
         chunks = quebrar_texto(docs)
+        salvar_memoria(chunks)
 
-        todos_chunks.extend(chunks)
-
-    salvar_memoria(todos_chunks)
     st.success("Arquivos carregados com sucesso!")
 
-    pergunta = st.text_input("Pergunta técnica")
-
+# pergunta SEMPRE liberada
+pergunta = st.text_input("Faça sua pergunta")
+   
     if st.button("Consultar"):
         resposta = buscar_memoria(pergunta)
-        st.write("📌 Resposta:")
         st.write(resposta)
-
+    else:
+        st.warning("Digite uma pergunta")
     # =========================
     # CADASTRO
     # =========================
