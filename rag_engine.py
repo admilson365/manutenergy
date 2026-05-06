@@ -96,7 +96,9 @@ def salvar_memoria(chunks):
 
     chunks = filtrar_chunks(chunks)
     VECTORSTORE = FAISS.from_documents(chunks, embeddings)
-
+    
+    VECTORSTORE.save_local(DB_PATH)
+    
 def buscar_memoria(pergunta):
     global VECTORSTORE
 
@@ -113,29 +115,32 @@ def buscar_memoria(pergunta):
     ]
 
     # busca inicial
-    docs = VECTORSTORE.similarity_search(pergunta, k=20)
+    docs = VECTORSTORE.similarity_search(pergunta, k=30)
 
     # filtro simples
-    docs_filtrados = []
+    docs_com_score = []
 
-    for doc in docs:
-        texto = doc.page_content.lower()
+for doc in docs:
+    texto = doc.page_content.lower()
 
-        if any(p in texto for p in palavras):
-            docs_filtrados.append(doc)
+    score = sum(1 for p in palavras if p in texto)
 
-    # usa filtrado se tiver resultado
-    if docs_filtrados:
-        docs = docs_filtrados
+    if score > 0:
+        docs_com_score.append((doc, score))
 
-    # fallback
-    docs = docs[:8]
+# ordena por relevância
+docs_com_score = sorted(docs_com_score, key=lambda x: x[1], reverse=True)
 
-    # monta contexto
-    contexto = "\n\n".join([
-        doc.page_content
-        for doc in docs[:10]
-    ])
+if docs_com_score:
+    docs = [d[0] for d in docs_com_score]
+
+docs = docs[:15]
+
+contexto = "\n\n".join([
+    doc.page_content
+    for doc in docs
+])
+# pega só os documentos
 
     print(contexto)
 
