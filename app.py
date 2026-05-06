@@ -70,7 +70,8 @@ if uploaded_files:
 # pergunta SEMPRE liberada
 pergunta = st.text_input("Faça sua pergunta")
    
-    if st.button("Consultar"):
+if st.button("Consultar"):
+    if pergunta:
         resposta = buscar_memoria(pergunta)
         st.write(resposta)
     else:
