@@ -18,7 +18,7 @@ def carregar_memoria():
     )
 
     if os.path.exists(DB_PATH):
-        VECTORSTORE = FAISS.load_local(DB_PATH, embeddings)
+        VECTORSTORE = FAISS.load_local(DB_PATH, embeddings, allow_dangerous_deserialization=True) 
 def ler_arquivo(file):
     docs = []
 
