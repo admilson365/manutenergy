@@ -120,27 +120,27 @@ def buscar_memoria(pergunta):
     # filtro simples
     docs_com_score = []
 
-for doc in docs:
-    texto = doc.page_content.lower()
+    for doc in docs:
+        texto = doc.page_content.lower()
 
-    score = sum(1 for p in palavras if p in texto)
+        score = sum(1 for p in palavras if p in texto)
 
-    if score > 0:
-        docs_com_score.append((doc, score))
+        if score > 0:
+            docs_com_score.append((doc, score))
 
-# ordena por relevância
-docs_com_score = sorted(docs_com_score, key=lambda x: x[1], reverse=True)
+    
+    docs_com_score = sorted(docs_com_score, key=lambda x: x[1], reverse=True)
 
-if docs_com_score:
-    docs = [d[0] for d in docs_com_score]
+    if docs_com_score:
+        docs = [d[0] for d in docs_com_score]
 
-docs = docs[:15]
+    docs = docs[:15]
 
-contexto = "\n\n".join([
+    contexto = "\n\n".join([
     doc.page_content
     for doc in docs
-])
-# pega só os documentos
+    ])
+
 
     print(contexto)
 
