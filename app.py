@@ -37,7 +37,7 @@ if not st.session_state.logado:
 
     if st.button("Entrar"):
 
-        if usuario.strip().lower() == "admin" and senha.strip() == "123":
+        if usuario.strip().lower() == "admin" and senha.strip() == "1234":
             st.session_state.logado = True
             st.rerun()
         else:
