@@ -116,7 +116,7 @@ def buscar_memoria(pergunta):
         p for p in pergunta.split()
         if p not in stopwords and len(p) > 2
     ]
-
+    palavra_principal = palavras[0] if palavras else ""
     # busca inicial
     docs = VECTORSTORE.similarity_search(pergunta, k=30)
 
@@ -128,7 +128,7 @@ def buscar_memoria(pergunta):
 
         score = sum(1 for p in palavras if p in texto)
 
-        if score > 2 and palavra_principal in texto:
+        if score >= 2 and palavra_principal in texto:
             docs_com_score.append((doc, score))
 
     
