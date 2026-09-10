@@ -175,7 +175,7 @@ TEXTO:
 
     chat = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
-        model="llama-3.1-8b-instant"
+        model="openai/gpt-oss-20b"
     )
 
     resposta = chat.choices[0].message.content
